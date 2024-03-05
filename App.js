@@ -12,29 +12,29 @@ class App extends React.Component {
     check: "check",
   }
 
-  // onValueChange = (key, event) => {
-  //   this.setState({
-  //     [key]: event.target.value
-  //   })
-  // }
-  // clicked = () => {
-  //   this.setState({
-  //     check: "work"
-  //   });
-  //
-  //   axios.post(this.state.apiDomain + add-user, null, {
-  //     params: {
-  //       username: this.state.username,
-  //       password: this.state.password
-  //     }
-  //   })
-  //       .then(response => {
-  //         console.log("Response status:", response.status);
-  //       })
-  //       .catch(error => {
-  //         console.error("Error:", error);
-  //       });
-  // }
+  onValueChange = (key, event) => {
+    this.setState({
+      [key]: event.target.value
+    })
+  }
+  clicked = () => {
+    this.setState({
+      check: "work"
+    });
+
+    axios.post(this.state.apiDomain + add-user, null, {
+      params: {
+        username: this.state.username,
+        password: this.state.password
+      }
+    })
+        .then(response => {
+          console.log("Response status:", response.status);
+        })
+        .catch(error => {
+          console.error("Error:", error);
+        });
+  }
 
 
 
