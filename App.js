@@ -6,35 +6,72 @@ import axios from "axios";
 
 class App extends React.Component {
   state = {
-    apiDomain: "http://localhost:9124/",
+    apiDomain: "http://172.20.10.4:9124/",
     username: "",
     password: "",
     check: "check",
   }
 
-  // onValueChange = (key, event) => {
-  //   this.setState({
-  //     [key]: event.target.value
-  //   })
-  // }
-  // clicked = () => {
-  //   this.setState({
-  //     check: "work"
-  //   });
-  //
-  //   axios.post(this.state.apiDomain + add-user, null, {
-  //     params: {
-  //       username: this.state.username,
-  //       password: this.state.password
-  //     }
-  //   })
-  //       .then(response => {
-  //         console.log("Response status:", response.status);
-  //       })
-  //       .catch(error => {
-  //         console.error("Error:", error);
-  //       });
-  // }
+  onValueChange = (key, text) => {
+    this.setState({
+      [key]: text
+    })
+  }
+
+
+
+  clicked = () => {
+    this.setState({
+      check: "work"
+    });
+
+    const username = this.state.username;
+    const password = this.state.password;
+
+      console.log("11111, ", username)
+      console.log("11111, ", password)
+      axios.post(
+          this.state.apiDomain+'add-user',
+          {},
+          {
+              params: {
+                  username,
+                  password
+              }
+          }
+      )
+          .then(response => {
+              console.log("22222", username)
+              // return success(response);
+          })
+          .catch(error => {
+              // return fail(error);
+          });
+
+
+      // axios.post(this.state.apiDomain+'add-user', null, {
+      //     params: {
+      //         username,
+      //         password
+      //     }
+      // })
+      //     .then(response => {
+      //         console.log('Response status:', response.status);
+      //     })
+      //     .catch(error => {
+      //         if (error.response) {
+      //             console.error('Error Data:', error.response.data);
+      //             console.error('Error Status:', error.response.status);
+      //         } else if (error.request) {
+      //             console.error('Error Request:', error.request);
+      //         } else {
+      //             console.error('Error Message:', error.message);
+      //         }
+      //         console.error('Error Config:', error.config);
+      //     });
+      //
+
+  }
 
 
 
@@ -44,9 +81,9 @@ class App extends React.Component {
         <View style={styles.container}>
           <Text>{this.state.check}</Text>
           <Text>username: </Text>
-          <TextInput value = {this.state.username} onChange={(event) => this.onValueChange("username", event)}   style={styles.input}></TextInput>
+          <TextInput value = {this.state.username} onChangeText={(text) => this.onValueChange("username", text)}   style={styles.input}></TextInput>
           <Text>password: </Text>
-          <TextInput value = {this.state.password} onChange={(event) => this.onValueChange("password", event)}   style={styles.input}></TextInput>
+          <TextInput value = {this.state.password} onChangeText={(text) => this.onValueChange("password", text)}   style={styles.input}></TextInput>
 
 
 
