@@ -28,7 +28,7 @@ class App extends React.Component {
     const username = this.state.username;
     const password = this.state.password;
 
-      console.log("11111, ", username)
+      console.log("111111, ", username)
       console.log("11111, ", password)
       axios.post(
           this.state.apiDomain+'add-user',
