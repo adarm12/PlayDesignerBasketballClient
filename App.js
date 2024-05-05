@@ -1,130 +1,130 @@
-import { StatusBar } from 'expo-status-bar';
 import React from 'react';
 import { View, Text, StyleSheet, TextInput, TouchableOpacity } from 'react-native';
 import axios from "axios";
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+import LoginPage from './LoginPage';
 
+const Stack = createStackNavigator();
 
 class App extends React.Component {
-  state = {
-    apiDomain: "http://172.20.10.4:9124/",
-    username: "",
-    password: "",
-    check: "check",
-  }
+    state = {
+        apiDomain: "http://172.20.10.4:9124/",
+        username: "",
+        password: "",
+        repeatPassword: "",
+        success: false,
+    }
 
-  onValueChange = (key, text) => {
-    this.setState({
-      [key]: text
-    })
-  }
+    onValueChange = (key, text) => {
+        this.setState({
+            [key]: text
+        });
+    }
 
+    same = () => {
+        return this.state.repeatPassword === this.state.password;
+    }
 
+    registerClicked = () => {
+        // Navigation to LoginPage
+        this.navigation.navigate('LoginPage');
+    }
 
-  clicked = () => {
-    this.setState({
-      check: "work"
-    });
+    clicked = () => {
+        axios.post(this.state.apiDomain + 'add-user', null, {
+            params: {
+                username: this.state.username,
+                password: this.state.password
+            }
+        })
+            .then(response => {
+                console.log('Response status:', response.status);
+            })
+            .catch(error => {
+                if (error.response) {
+                    console.error('Error Data:', error.response.data);
+                }
+            });
 
-    const username = this.state.username;
-    const password = this.state.password;
+    }
 
-      console.log("111111, ", username)
-      console.log("11111, ", password)
-      axios.post(
-          this.state.apiDomain+'add-user',
-          {},
-          {
-              params: {
-                  username,
-                  password
-              }
-          }
-      )
-          .then(response => {
-              console.log("22222", username)
-              // return success(response);
-          })
-          .catch(error => {
-              // return fail(error);
-          });
-
-
-      // axios.post(this.state.apiDomain+'add-user', null, {
-      //     params: {
-      //         username,
-      //         password
-      //     }
-      // })
-      //     .then(response => {
-      //         console.log('Response status:', response.status);
-      //     })
-      //     .catch(error => {
-      //         if (error.response) {
-      //             console.error('Error Data:', error.response.data);
-      //             console.error('Error Status:', error.response.status);
-      //         } else if (error.request) {
-      //             console.error('Error Request:', error.request);
-      //         } else {
-      //             console.error('Error Message:', error.message);
-      //         }
-      //         console.error('Error Config:', error.config);
-      //     });
-      //
-
-  }
-
-
-
-
-  render() {
-    return (
-        <View style={styles.container}>
-          <Text>{this.state.check}</Text>
-          <Text>username: </Text>
-          <TextInput value = {this.state.username} onChangeText={(text) => this.onValueChange("username", text)}   style={styles.input}></TextInput>
-          <Text>password: </Text>
-          <TextInput value = {this.state.password} onChangeText={(text) => this.onValueChange("password", text)}   style={styles.input}></TextInput>
-
-
-
-          <TouchableOpacity onPress = {this.clicked} style={styles.button}>
-            <Text>
-              Button
-            </Text>
-          </TouchableOpacity>
-
-          <StatusBar style="auto" />
-
-        </View>
-    );
-  }
+    render() {
+        return (
+            <View style={styles.container}>
+                <Text style={styles.heading}>Sign up Form</Text>
+                <TextInput
+                    style={styles.input}
+                    placeholder="Username"
+                    value={this.state.username}
+                    onChangeText={(text) => this.onValueChange("username", text)}
+                />
+                <TextInput
+                    style={styles.input}
+                    placeholder="Password"
+                    secureTextEntry={true}
+                    value={this.state.password}
+                    onChangeText={(text) => this.onValueChange("password", text)}
+                />
+                <TextInput
+                    style={[styles.input, { backgroundColor: this.same() ? 'green' : 'red' }]}
+                    placeholder="Repeat Password"
+                    secureTextEntry={true}
+                    value={this.state.repeatPassword}
+                    onChangeText={(text) => this.onValueChange("repeatPassword", text)}
+                />
+                <TouchableOpacity onPress={this.clicked} style={styles.button}>
+                    <Text style={styles.buttonText}>Submit</Text>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={this.registerClicked} style={styles.button}>
+                    <Text style={styles.buttonText}>To register</Text>
+                </TouchableOpacity>
+            </View>
+        );
+    }
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 5,
-    padding: 5,
-    marginBottom: 10,
-    width: 200,
-  },
-  button: {
-    backgroundColor: 'yellow',
-    padding: 10,
-    borderRadius: 5,
-    marginTop: 10,
-  },
-  buttonText: {
-    color: 'black',
-    fontWeight: 'bold',
-  },
+    container: {
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    heading: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        marginBottom: 20,
+    },
+    input: {
+        borderWidth: 1,
+        borderColor: '#ccc',
+        borderRadius: 5,
+        padding: 10,
+        marginBottom: 10,
+        width: '80%',
+    },
+    button: {
+        backgroundColor: 'skyblue',
+        padding: 10,
+        borderRadius: 5,
+    },
+    buttonText: {
+        color: 'white',
+        fontWeight: 'bold',
+        textAlign: 'center',
+
+    },
 });
 
-export default App;
+function AppWrapper() {
+    return (
+        <NavigationContainer>
+            <Stack.Navigator initialRouteName="Home">
+                <Stack.Screen name="Home" component={App} />
+                <Stack.Screen name="Login" component={LoginPage} />
+            </Stack.Navigator>
+        </NavigationContainer>
+    );
+}
+
+export default AppWrapper;
