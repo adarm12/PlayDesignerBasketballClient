@@ -3,7 +3,6 @@ import React from 'react'
 import {sendApiPostRequest} from "./ApiRequests";
 import SearchUser from "./SearchUser";
 
-
 class LoginPage extends React.Component {
         state = {
             apiDomain: "",
