@@ -1,32 +1,41 @@
-import {View, Text, StyleSheet, TextInput, TouchableOpacity} from "react-native";
-import React from 'react'
+import React from 'react';
+import {View, Text, StyleSheet, TextInput, TouchableOpacity} from 'react-native';
 import {sendApiPostRequest} from "./ApiRequests";
-import SearchUser from "./SearchUser";
+import LoginPage from './LoginPage';
 
-
-class LoginPage extends React.Component {
+class SignUp extends React.Component {
     state = {
         apiDomain: "",
         username: "",
         password: "",
-        loginSuccess: false,
-        userSecret: "",
+        repeatPassword: "",
+        success: false,
+        login: false,
         errorMessage: "",
     }
 
-    login = () => {
+    onValueChange = (key, value) => {
+        this.setState({[key]: value});
+    }
+
+    changeLogin = () => {
+        this.setState({login: !this.state.login});
+    }
+    same = () => {
+        return this.state.repeatPassword === this.state.password;
+    }
+
+    signUp = () => {
         console.log(this.state.username);
         console.log(this.state.password);
-        sendApiPostRequest(this.state.apiDomain + '/login', {
+        sendApiPostRequest(this.state.apiDomain + 'add-user', {
             username: this.state.username,
             password: this.state.password,
+            repeatPassword: this.state.repeatPassword,
         }, (response) => {
             console.log('Response:', response.data);
             if (response.data.success) {
-                console.log('You have successfully connected');
-                console.log(response.data.user.secret);
-                this.setState({loginSuccess: true});
-                this.setState({userSecret: response.data.user.secret});
+                console.log('You have successfully signed up');
             }
             this.setState({errorMessage: response.data.errorCode})
         })
@@ -36,10 +45,10 @@ class LoginPage extends React.Component {
         let errorMessage = "";
         switch (this.state.errorMessage) {
             case 0:
-                errorMessage = "You have successfully connected";
+                errorMessage = "You have successfully signed up";
                 break;
-            case 9:
-                errorMessage = "User name does not exits";
+            case 1:
+                errorMessage = "User name taken";
                 break;
             case 3:
                 errorMessage = "No username entered";
@@ -47,29 +56,22 @@ class LoginPage extends React.Component {
             case 4:
                 errorMessage = "No password entered";
                 break;
-            case 5:
-                errorMessage = "Incorrect password";
+            case 8:
+                errorMessage = "Repeat password does not match";
                 break;
         }
         return errorMessage;
     }
 
-    onValueChange = (key, text) => {
-        this.setState({
-            [key]: text
-        });
-    }
-
     render() {
         return (
             <View style={styles.container}>
-                {!this.state.loginSuccess ?
+                {!this.state.login ?
                     <View style={styles.container}>
-                        <Text style={styles.heading}>Login</Text>
+                        <Text style={styles.heading}>Sign Up</Text>
                         <TextInput
                             style={styles.input}
-                            placeholder="username"
-                            secureTextEntry={true}
+                            placeholder="Username"
                             value={this.state.username}
                             onChangeText={(text) => this.onValueChange("username", text)}
                         />
@@ -80,19 +82,28 @@ class LoginPage extends React.Component {
                             value={this.state.password}
                             onChangeText={(text) => this.onValueChange("password", text)}
                         />
-                        <TouchableOpacity onPress={this.login} style={styles.button}>
+                        <TextInput
+                            style={[styles.input, {backgroundColor: this.same() ? 'green' : 'red'}]}
+                            placeholder="Repeat Password"
+                            secureTextEntry={true}
+                            value={this.state.repeatPassword}
+                            onChangeText={(text) => this.onValueChange("repeatPassword", text)}
+                        />
+                        <TouchableOpacity onPress={this.signUp} style={styles.button}>
                             <Text style={styles.buttonText}>Submit</Text>
                         </TouchableOpacity>
                         <Text>{this.errorCodeMessage()}</Text>
+                        <TouchableOpacity onPress={this.changeLogin} style={styles.button}>
+                            <Text style={styles.buttonText}>Login</Text>
+                        </TouchableOpacity>
                     </View>
                     :
                     <View style={styles.container}>
-                        <SearchUser></SearchUser>
+                        <LoginPage></LoginPage>
                     </View>
                 }
-
             </View>
-        )
+        );
     }
 }
 
@@ -125,8 +136,9 @@ const styles = StyleSheet.create({
         color: 'white',
         fontWeight: 'bold',
         textAlign: 'center',
+
     },
 });
 
+export default SignUp;
 
-export default LoginPage;

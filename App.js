@@ -1,83 +1,24 @@
 import React from 'react';
-import { View, Text, StyleSheet, TextInput, TouchableOpacity } from 'react-native';
-import axios from "axios";
-import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
-import LoginPage from './LoginPage';
+import {View, Text, StyleSheet, TextInput, TouchableOpacity} from 'react-native';
+import {NavigationContainer} from '@react-navigation/native';
+import {createStackNavigator} from '@react-navigation/stack';
+import SignUp from "./SignUp";
+import LoginPage from "./LoginPage";
 
 const Stack = createStackNavigator();
 
 class App extends React.Component {
-    state = {
-        apiDomain: "http://172.20.10.4:9124/",
-        username: "",
-        password: "",
-        repeatPassword: "",
-        success: false,
-    }
-
-    onValueChange = (key, text) => {
-        this.setState({
-            [key]: text
-        });
-    }
-
-    same = () => {
-        return this.state.repeatPassword === this.state.password;
-    }
-
-    registerClicked = () => {
-        // Navigation to LoginPage
-        this.navigation.navigate('LoginPage');
-    }
-
-    clicked = () => {
-        axios.post(this.state.apiDomain + 'add-user', null, {
-            params: {
-                username: this.state.username,
-                password: this.state.password
-            }
-        })
-            .then(response => {
-                console.log('Response status:', response.status);
-            })
-            .catch(error => {
-                if (error.response) {
-                    console.error('Error Data:', error.response.data);
-                }
-            });
-
-    }
 
     render() {
+        const {navigation} = this.props;
         return (
             <View style={styles.container}>
-                <Text style={styles.heading}>Sign up Form</Text>
-                <TextInput
-                    style={styles.input}
-                    placeholder="Username"
-                    value={this.state.username}
-                    onChangeText={(text) => this.onValueChange("username", text)}
-                />
-                <TextInput
-                    style={styles.input}
-                    placeholder="Password"
-                    secureTextEntry={true}
-                    value={this.state.password}
-                    onChangeText={(text) => this.onValueChange("password", text)}
-                />
-                <TextInput
-                    style={[styles.input, { backgroundColor: this.same() ? 'green' : 'red' }]}
-                    placeholder="Repeat Password"
-                    secureTextEntry={true}
-                    value={this.state.repeatPassword}
-                    onChangeText={(text) => this.onValueChange("repeatPassword", text)}
-                />
-                <TouchableOpacity onPress={this.clicked} style={styles.button}>
-                    <Text style={styles.buttonText}>Submit</Text>
+                <Text style={styles.heading}>Play Designer Basketball</Text>
+                <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('SignUp')}>
+                    <Text style={styles.buttonText}>Sign Up</Text>
                 </TouchableOpacity>
-                <TouchableOpacity onPress={this.registerClicked} style={styles.button}>
-                    <Text style={styles.buttonText}>To register</Text>
+                <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Login')}>
+                    <Text style={styles.buttonText}>Log In</Text>
                 </TouchableOpacity>
             </View>
         );
@@ -107,6 +48,8 @@ const styles = StyleSheet.create({
         backgroundColor: 'skyblue',
         padding: 10,
         borderRadius: 5,
+        marginBottom: 10,
+        width: 100,
     },
     buttonText: {
         color: 'white',
@@ -116,12 +59,14 @@ const styles = StyleSheet.create({
     },
 });
 
+
 function AppWrapper() {
     return (
         <NavigationContainer>
             <Stack.Navigator initialRouteName="Home">
-                <Stack.Screen name="Home" component={App} />
-                <Stack.Screen name="Login" component={LoginPage} />
+                <Stack.Screen name="Home" component={App}/>
+                <Stack.Screen name="SignUp" component={SignUp}/>
+                <Stack.Screen name="Login" component={LoginPage}/>
             </Stack.Navigator>
         </NavigationContainer>
     );
