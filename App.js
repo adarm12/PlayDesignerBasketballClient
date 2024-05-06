@@ -1,25 +1,46 @@
 import React from 'react';
 import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
-import {NavigationContainer} from '@react-navigation/native';
-import {createStackNavigator} from '@react-navigation/stack';
-import SignUp from "./SignUp";
 import LoginPage from "./LoginPage";
-
-const Stack = createStackNavigator();
+import SignUp from "./SignUp";
 
 class App extends React.Component {
 
+    state = {
+        signUp: false,
+        login: false,
+        showButtons: false,
+    }
+
     render() {
-        const {navigation} = this.props;
         return (
             <View style={styles.container}>
-                <Text style={styles.heading}>Play Designer Basketball</Text>
-                <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('SignUp')}>
-                    <Text style={styles.buttonText}>Sign Up</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Login')}>
-                    <Text style={styles.buttonText}>Log In</Text>
-                </TouchableOpacity>
+                {!this.state.showButtons ?
+                    <View style={styles.container}>
+                        <Text style={styles.heading}>Play Designer Basketball</Text>
+                        <TouchableOpacity style={styles.button}
+                                          onPress={() => this.setState({signUp: true, showButtons: true})}>
+                            <Text style={styles.buttonText}>Sign Up</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.button}
+                                          onPress={() => this.setState({login: true, showButtons: true})}>
+                            <Text style={styles.buttonText}>Log In</Text>
+                        </TouchableOpacity>
+                    </View>
+                    :
+                    <View style={styles.container}>
+                        {this.state.signUp ?
+                            <SignUp></SignUp>
+                            :
+                            <View></View>
+                        }
+                        {this.state.login ?
+                            <LoginPage></LoginPage>
+                            :
+                            <View></View>
+                        }
+                    </View>
+                }
+                <View></View>
             </View>
         );
     }
@@ -59,16 +80,4 @@ const styles = StyleSheet.create({
     },
 });
 
-
-function AppWrapper() {
-    return (
-        <NavigationContainer>
-            <Stack.Navigator initialRouteName="Home">
-                <Stack.Screen name="Home" component={App}/>
-                <Stack.Screen name="SignUp" component={SignUp}/>
-                <Stack.Screen name="Login" component={LoginPage}/>
-            </Stack.Navigator>
-        </NavigationContainer>
-    );
-}
-export default AppWrapper;
+export default App;
