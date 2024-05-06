@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, Text, StyleSheet, TextInput, TouchableOpacity} from 'react-native';
+import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 import SignUp from "./SignUp";
@@ -71,5 +71,4 @@ function AppWrapper() {
         </NavigationContainer>
     );
 }
-
 export default AppWrapper;

@@ -5,14 +5,14 @@ import SearchUser from "./SearchUser";
 
 
 class LoginPage extends React.Component {
-    state = {
-        apiDomain: "",
-        username: "",
-        password: "",
-        loginSuccess: false,
-        userSecret: "",
-        errorMessage: "",
-    }
+        state = {
+            apiDomain: "",
+            username: "",
+            password: "",
+            loginSuccess: false,
+            userSecret: "",
+            errorCode: "",
+        }
 
     login = () => {
         console.log(this.state.username);
@@ -28,13 +28,13 @@ class LoginPage extends React.Component {
                 this.setState({loginSuccess: true});
                 this.setState({userSecret: response.data.user.secret});
             }
-            this.setState({errorMessage: response.data.errorCode})
+            this.setState({errorCode: response.data.errorCode})
         })
     }
 
     errorCodeMessage = () => {
         let errorMessage = "";
-        switch (this.state.errorMessage) {
+        switch (this.state.errorCode) {
             case 0:
                 errorMessage = "You have successfully connected";
                 break;
@@ -87,7 +87,7 @@ class LoginPage extends React.Component {
                     </View>
                     :
                     <View style={styles.container}>
-                        <SearchUser></SearchUser>
+                        <SearchUser stateFromLogin={this.state}></SearchUser>
                     </View>
                 }
 

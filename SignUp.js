@@ -11,7 +11,7 @@ class SignUp extends React.Component {
         repeatPassword: "",
         success: false,
         login: false,
-        errorMessage: "",
+        errorCode: "",
     }
 
     onValueChange = (key, value) => {
@@ -28,7 +28,7 @@ class SignUp extends React.Component {
     signUp = () => {
         console.log(this.state.username);
         console.log(this.state.password);
-        sendApiPostRequest(this.state.apiDomain + 'add-user', {
+        sendApiPostRequest(this.state.apiDomain + '/add-user', {
             username: this.state.username,
             password: this.state.password,
             repeatPassword: this.state.repeatPassword,
@@ -37,13 +37,13 @@ class SignUp extends React.Component {
             if (response.data.success) {
                 console.log('You have successfully signed up');
             }
-            this.setState({errorMessage: response.data.errorCode})
+            this.setState({errorCode: response.data.errorCode})
         })
     }
 
     errorCodeMessage = () => {
         let errorMessage = "";
-        switch (this.state.errorMessage) {
+        switch (this.state.errorCode) {
             case 0:
                 errorMessage = "You have successfully signed up";
                 break;

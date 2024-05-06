@@ -3,7 +3,6 @@ import React from 'react';
 import {View, Text, StyleSheet, TextInput, TouchableOpacity} from 'react-native';
 import {sendApiPostRequest} from "./ApiRequests";
 
-
 class searchUser extends React.Component {
     state = {
         apiDomain: "",
@@ -16,8 +15,8 @@ class searchUser extends React.Component {
     search = () => {
         console.log(this.state.secretFrom);
         console.log(this.state.partOfUsername);
-        sendApiPostRequest(this.state.apiDomain + 'search-user', {
-            secretFrom: this.state.userSecret,
+        sendApiPostRequest(this.state.apiDomain + '/search-user', {
+            secretFrom: this.state.secretFrom,
             partOfUsername: this.state.partOfUsername,
         }, (response) => {
             console.log('Response:', response.data);
