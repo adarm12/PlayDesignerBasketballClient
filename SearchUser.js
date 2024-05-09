@@ -12,11 +12,12 @@ class searchUser extends React.Component {
         response: "",
     }
 
+
     search = () => {
-        console.log(this.state.secretFrom);
+        console.log(this.props.secretFromLogin);
         console.log(this.state.partOfUsername);
         sendApiPostRequest(this.state.apiDomain + '/search-user', {
-            secretFrom: this.state.secretFrom,
+            secretFrom: this.props.secretFromLogin,
             partOfUsername: this.state.partOfUsername,
         }, (response) => {
             console.log('Response:', response.data);

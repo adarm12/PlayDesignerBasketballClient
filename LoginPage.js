@@ -86,7 +86,7 @@ class LoginPage extends React.Component {
                     </View>
                     :
                     <View style={styles.container}>
-                        <SearchUser stateFromLogin={this.state}></SearchUser>
+                        <SearchUser secretFromLogin={this.state.userSecret}></SearchUser>
                     </View>
                 }
 
