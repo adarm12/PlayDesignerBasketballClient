@@ -2,21 +2,25 @@ import {View, Text, StyleSheet, TextInput, TouchableOpacity} from "react-native"
 import React from 'react'
 import {sendApiPostRequest} from "./ApiRequests";
 import SearchUser from "./SearchUser";
+import ShowRequesters from "./ShowRequesters";
 
 class LoginPage extends React.Component {
-        state = {
-            apiDomain: "",
-            username: "",
-            password: "",
-            loginSuccess: false,
-            userSecret: "",
-            errorCode: "",
-        }
+    state = {
+        apiDomain: "",
+        username: null,
+        password: null,
+        loginSuccess: false,
+        userSecret: "",
+        errorCode: "",
+        sendRequest: false,
+        acceptRequest: false,
+    }
+
 
     login = () => {
         console.log(this.state.username);
         console.log(this.state.password);
-        sendApiPostRequest(this.state.apiDomain + '/login', {
+        sendApiPostRequest('/login', {
             username: this.state.username,
             password: this.state.password,
         }, (response) => {
@@ -34,11 +38,8 @@ class LoginPage extends React.Component {
     errorCodeMessage = () => {
         let errorMessage = "";
         switch (this.state.errorCode) {
-            case 0:
+            case -1:
                 errorMessage = "You have successfully connected";
-                break;
-            case 9:
-                errorMessage = "User name does not exits";
                 break;
             case 3:
                 errorMessage = "No username entered";
@@ -47,7 +48,7 @@ class LoginPage extends React.Component {
                 errorMessage = "No password entered";
                 break;
             case 5:
-                errorMessage = "Incorrect password";
+                errorMessage = "Incorrect username or password";
                 break;
         }
         return errorMessage;
@@ -59,11 +60,22 @@ class LoginPage extends React.Component {
         });
     }
 
+    goBack = () => {
+        this.setState({loginSuccess: !this.state.loginSuccess})
+        if (this.state.acceptRequest)
+            this.setState({acceptRequest: !this.state.acceptRequest})
+        else if (this.state.signUp)
+            this.setState({sendRequest: !this.state.sendRequest})
+    }
+
     render() {
         return (
             <View style={styles.container}>
                 {!this.state.loginSuccess ?
                     <View style={styles.container}>
+                        <TouchableOpacity onPress={this.props.goBack} style={styles.button}>
+                            <Text style={styles.buttonText}>Go Back</Text>
+                        </TouchableOpacity>
                         <Text style={styles.heading}>Login</Text>
                         <TextInput
                             style={styles.input}
@@ -86,7 +98,35 @@ class LoginPage extends React.Component {
                     </View>
                     :
                     <View style={styles.container}>
-                        <SearchUser secretFromLogin={this.state.userSecret}></SearchUser>
+                        {!this.state.acceptRequest && !this.state.sendRequest ?
+                            <View style={styles.container}>
+                                <TouchableOpacity onPress={() => this.setState({sendRequest: true})}
+                                                  style={[styles.button, {width: 200}]}>
+                                    <Text style={styles.buttonText}>Send Friend Request</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity onPress={() => this.setState({acceptRequest: true})}
+                                                  style={[styles.button, {width: 200}]}>
+                                    <Text style={styles.buttonText}>Accept Friend Request</Text>
+                                </TouchableOpacity>
+                            </View>
+                            :
+                            <View style={styles.container}>
+                                {this.state.sendRequest ?
+                                    <SearchUser secretFromLogin={this.state.userSecret}
+                                                goBack={this.goBack}>
+                                    </SearchUser>
+                                    :
+                                    <View></View>
+                                }
+                                {this.state.acceptRequest ?
+                                    <ShowRequesters secretFromLogin={this.state.userSecret}
+                                                    goBack={this.goBack}>
+                                    </ShowRequesters>
+                                    :
+                                    <View></View>
+                                }
+                            </View>
+                        }
                     </View>
                 }
 
@@ -119,9 +159,10 @@ const styles = StyleSheet.create({
         padding: 10,
         borderRadius: 5,
         width: 100,
+        marginBottom: 5,
     },
     buttonText: {
-        color: 'white',
+        color: 'black',
         fontWeight: 'bold',
         textAlign: 'center',
     },

@@ -6,9 +6,9 @@ import LoginPage from './LoginPage';
 class SignUp extends React.Component {
     state = {
         apiDomain: "",
-        username: "",
-        password: "",
-        repeatPassword: "",
+        username: null,
+        password: null,
+        repeatPassword: null,
         success: false,
         login: false,
         errorCode: "",
@@ -18,9 +18,6 @@ class SignUp extends React.Component {
         this.setState({[key]: value});
     }
 
-    changeLogin = () => {
-        this.setState({login: !this.state.login});
-    }
     same = () => {
         return this.state.repeatPassword === this.state.password;
     }
@@ -28,7 +25,7 @@ class SignUp extends React.Component {
     signUp = () => {
         console.log(this.state.username);
         console.log(this.state.password);
-        sendApiPostRequest(this.state.apiDomain + '/add-user', {
+        sendApiPostRequest('/sign-up', {
             username: this.state.username,
             password: this.state.password,
             repeatPassword: this.state.repeatPassword,
@@ -44,11 +41,14 @@ class SignUp extends React.Component {
     errorCodeMessage = () => {
         let errorMessage = "";
         switch (this.state.errorCode) {
-            case 0:
+            case -1:
                 errorMessage = "You have successfully signed up";
                 break;
+            case 0:
+                errorMessage = "There are missing fields";
+                break;
             case 1:
-                errorMessage = "User name taken";
+                errorMessage = "The username is taken";
                 break;
             case 3:
                 errorMessage = "No username entered";
@@ -56,6 +56,15 @@ class SignUp extends React.Component {
             case 4:
                 errorMessage = "No password entered";
                 break;
+            case 14:
+                errorMessage = "No repeat password entered";
+                break;
+            // case 6:
+            //     errorMessage = "Password length should be at least 8";
+            //     break;
+            // case 7:
+            //     errorMessage = "Password should contain ! or @";
+            //     break;
             case 8:
                 errorMessage = "Repeat password does not match";
                 break;
@@ -68,6 +77,9 @@ class SignUp extends React.Component {
             <View style={styles.container}>
                 {!this.state.login ?
                     <View style={styles.container}>
+                        <TouchableOpacity onPress={this.props.goBack} style={styles.button}>
+                            <Text style={styles.buttonText}>Go Back</Text>
+                        </TouchableOpacity>
                         <Text style={styles.heading}>Sign Up</Text>
                         <TextInput
                             style={styles.input}
@@ -93,7 +105,8 @@ class SignUp extends React.Component {
                             <Text style={styles.buttonText}>Submit</Text>
                         </TouchableOpacity>
                         <Text>{this.errorCodeMessage()}</Text>
-                        <TouchableOpacity onPress={this.changeLogin} style={styles.button}>
+                        <TouchableOpacity onPress={() => this.setState({login: !this.state.login})}
+                                          style={styles.button}>
                             <Text style={styles.buttonText}>Login</Text>
                         </TouchableOpacity>
                     </View>
@@ -133,10 +146,9 @@ const styles = StyleSheet.create({
         width: 100,
     },
     buttonText: {
-        color: 'white',
+        color: 'black',
         fontWeight: 'bold',
         textAlign: 'center',
-
     },
 });
 

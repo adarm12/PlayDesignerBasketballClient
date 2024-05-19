@@ -11,6 +11,14 @@ class App extends React.Component {
         showButtons: false,
     }
 
+    goBack = () => {
+        this.setState({showButtons: !this.state.showButtons})
+        if (this.state.login)
+            this.setState({login: !this.state.login})
+        else if (this.state.signUp)
+            this.setState({signUp: !this.state.signUp})
+    }
+
     render() {
         return (
             <View style={styles.container}>
@@ -29,12 +37,12 @@ class App extends React.Component {
                     :
                     <View style={styles.container}>
                         {this.state.signUp ?
-                            <SignUp></SignUp>
+                            <SignUp goBack={this.goBack}></SignUp>
                             :
                             <View></View>
                         }
                         {this.state.login ?
-                            <LoginPage></LoginPage>
+                            <LoginPage goBack={this.goBack}></LoginPage>
                             :
                             <View></View>
                         }
@@ -73,10 +81,9 @@ const styles = StyleSheet.create({
         width: 100,
     },
     buttonText: {
-        color: 'white',
+        color: 'black',
         fontWeight: 'bold',
         textAlign: 'center',
-
     },
 });
 
