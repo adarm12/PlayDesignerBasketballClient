@@ -1,17 +1,22 @@
 import React from 'react';
-import {View, Text, StyleSheet, TextInput, TouchableOpacity,} from 'react-native';
+import {View, Text, StyleSheet, TouchableOpacity,} from 'react-native';
 import {sendApiPostRequest} from "./ApiRequests";
 import {StatusBar} from "expo-status-bar/build/StatusBar";
 
 class ShowRequesters extends React.Component {
     state = {
+        apiDomain: "",
         responseList: null,
     }
 
+    componentDidMount() {
+        this.ShowRequest();
+    }
 
     ShowRequest = () => {
         console.log("secret:" + this.props.secretFromLogin);
-        sendApiPostRequest('/get-friend-requests', {
+        this.setState({apiDomain: this.props.domain})
+        sendApiPostRequest(this.state.apiDomain +'/get-friend-requests', {
             secretFrom: this.props.secretFromLogin,
         }, (response) => {
             console.log('Response:', response.data.users);
@@ -22,27 +27,31 @@ class ShowRequesters extends React.Component {
         })
     }
 
-    componentDidMount() {
-        this.ShowRequest();
-    }
-
-
     render() {
         return (
             <View style={styles.container}>
-                <TouchableOpacity onPress={this.props.goBack} style={styles.button}>
+                <TouchableOpacity onPress={this.props.goBack}
+                                  style={[styles.button, {left: -140}, {width: 80}, {top: 10}]}>
                     <Text style={styles.buttonText}>Go Back</Text>
                 </TouchableOpacity>
-                <Text style={styles.heading}>Show Requesters</Text>
-                {this.state.responseList.map((users,index) => (
-                    <Text key={index}>
-                        <TouchableOpacity style={[styles.button, {width: 150}]}>
-                            <Text style={styles.buttonText}>
-                                {users.username}
+                {this.state.responseList != null ?
+                    <View style={styles.container}>
+                        <Text style={styles.heading}>Show Requesters</Text>
+                        {this.state.responseList.map((users, index) => (
+                            <Text key={index}>
+                                <TouchableOpacity style={[styles.button, {width: 150}]}>
+                                    <Text style={styles.buttonText}>
+                                        {users.username}
+                                    </Text>
+                                </TouchableOpacity>
                             </Text>
-                        </TouchableOpacity>
-                    </Text>
-                ))}
+                        ))}
+                    </View>
+                    :
+                    <View>
+                        <Text style={styles.heading}> There are no friend requests </Text>
+                    </View>
+                }
                 <StatusBar style="auto"/>
             </View>
         );
@@ -64,23 +73,18 @@ const styles = StyleSheet.create({
     },
     input: {
         borderWidth: 1,
-        borderColor: '#ccc',
         borderRadius: 5,
-        padding: 5,
+        padding: 10,
         marginBottom: 10,
         width: 200,
+        backgroundColor: '#ffffff',
     },
     button: {
-        backgroundColor: 'skyblue',
+        backgroundColor: "#ffffff",
         padding: 10,
         borderRadius: 5,
-        marginBottom: 5,
-    },
-    text: {
-        fontSize: 18,
-        padding: 10,
-        borderRadius: 5,
-        width: 180,
+        marginBottom: 10,
+        width: 100,
     },
     buttonText: {
         color: 'black',

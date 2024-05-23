@@ -5,15 +5,20 @@ import {StatusBar} from "expo-status-bar/build/StatusBar";
 
 class SendFriendRequest extends React.Component {
     state = {
+        apiDomain: "",
         response: "",
         requestSuccess: false,
         errorCode: "",
     }
 
+    componentDidMount() {
+        this.setState({apiDomain: this.props.domain})
+    }
+
     request = () => {
         console.log("secret:" + this.props.stateFromSearch.secretFrom);
         console.log("usernameTo:" + this.props.stateFromSearch.usernameTo);
-        sendApiPostRequest('/request-friend', {
+        sendApiPostRequest(this.state.apiDomain +'/request-friend', {
             secretFrom: this.props.stateFromSearch.secretFrom,
             usernameTo: this.props.stateFromSearch.usernameTo,
         }, (response) => {
@@ -79,21 +84,23 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: '#ccc',
         borderRadius: 5,
-        padding: 5,
+        padding: 10,
         marginBottom: 10,
         width: 200,
+        backgroundColor: '#ffffff',
     },
     button: {
-        backgroundColor: 'skyblue',
+        backgroundColor: "#ffffff",
         padding: 10,
         borderRadius: 5,
-        width: 80,
+        marginBottom: 10,
+        width: 100,
     },
     text: {
-        fontSize: 18,
-        padding: 10,
-        borderRadius: 5,
-        width: "auto",
+        fontSize: 20,
+        marginBottom: 10,
+        fontWeight: 'bold',
+
     },
     buttonText: {
         color: 'black',

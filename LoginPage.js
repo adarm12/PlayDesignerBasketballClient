@@ -16,11 +16,15 @@ class LoginPage extends React.Component {
         acceptRequest: false,
     }
 
+    componentDidMount() {
+        this.setState({apiDomain: this.props.domain})
+    }
+
 
     login = () => {
         console.log(this.state.username);
         console.log(this.state.password);
-        sendApiPostRequest('/login', {
+        sendApiPostRequest(this.state.apiDomain +'/login', {
             username: this.state.username,
             password: this.state.password,
         }, (response) => {
@@ -61,10 +65,9 @@ class LoginPage extends React.Component {
     }
 
     goBack = () => {
-        this.setState({loginSuccess: !this.state.loginSuccess})
         if (this.state.acceptRequest)
             this.setState({acceptRequest: !this.state.acceptRequest})
-        else if (this.state.signUp)
+        else if (this.state.sendRequest)
             this.setState({sendRequest: !this.state.sendRequest})
     }
 
@@ -73,7 +76,7 @@ class LoginPage extends React.Component {
             <View style={styles.container}>
                 {!this.state.loginSuccess ?
                     <View style={styles.container}>
-                        <TouchableOpacity onPress={this.props.goBack} style={styles.button}>
+                        <TouchableOpacity onPress={this.props.goBack} style={styles.buttonGoBack}>
                             <Text style={styles.buttonText}>Go Back</Text>
                         </TouchableOpacity>
                         <Text style={styles.heading}>Login</Text>
@@ -100,6 +103,11 @@ class LoginPage extends React.Component {
                     <View style={styles.container}>
                         {!this.state.acceptRequest && !this.state.sendRequest ?
                             <View style={styles.container}>
+                                <TouchableOpacity onPress={() => this.setState({
+                                    loginSuccess: !this.state.loginSuccess
+                                })} style={styles.button}>
+                                    <Text style={styles.buttonText}>Go Back</Text>
+                                </TouchableOpacity>
                                 <TouchableOpacity onPress={() => this.setState({sendRequest: true})}
                                                   style={[styles.button, {width: 200}]}>
                                     <Text style={styles.buttonText}>Send Friend Request</Text>
@@ -113,6 +121,7 @@ class LoginPage extends React.Component {
                             <View style={styles.container}>
                                 {this.state.sendRequest ?
                                     <SearchUser secretFromLogin={this.state.userSecret}
+                                                domain={this.state.apiDomain}
                                                 goBack={this.goBack}>
                                     </SearchUser>
                                     :
@@ -120,6 +129,7 @@ class LoginPage extends React.Component {
                                 }
                                 {this.state.acceptRequest ?
                                     <ShowRequesters secretFromLogin={this.state.userSecret}
+                                                    domain={this.state.apiDomain}
                                                     goBack={this.goBack}>
                                     </ShowRequesters>
                                     :
@@ -153,13 +163,23 @@ const styles = StyleSheet.create({
         padding: 10,
         marginBottom: 10,
         width: 200,
+        backgroundColor: '#ffffff',
     },
     button: {
-        backgroundColor: 'skyblue',
+        backgroundColor: "#ffffff",
         padding: 10,
         borderRadius: 5,
+        marginBottom: 10,
         width: 100,
-        marginBottom: 5,
+    },
+    buttonGoBack: {
+        backgroundColor: "#ffffff",
+        padding: 10,
+        borderRadius: 5,
+        position: 'absolute',
+        top: 60,
+        left: -80,
+        width: 80,
     },
     buttonText: {
         color: 'black',

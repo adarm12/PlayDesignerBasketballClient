@@ -19,7 +19,7 @@ class SearchUser extends React.Component {
     search = () => {
         console.log("secret" + this.props.secretFromLogin);
         console.log(this.state.partOfUsername);
-        sendApiPostRequest('/search-user', {
+        sendApiPostRequest(this.state.apiDomain +'/search-user', {
             secretFrom: this.props.secretFromLogin,
             partOfUsername: this.state.partOfUsername,
         }, (response) => {
@@ -32,6 +32,10 @@ class SearchUser extends React.Component {
                     this.setState({message: "No search"});
             }
         })
+    }
+
+    componentDidMount() {
+        this.setState({apiDomain: this.props.domain})
     }
 
     goBack = () => {
@@ -51,7 +55,8 @@ class SearchUser extends React.Component {
                     <View style={styles.container}>
                         {!this.state.searchSuccess ?
                             <View style={styles.container}>
-                                <TouchableOpacity onPress={this.props.goBack} style={styles.button}>
+                                <TouchableOpacity onPress={this.props.goBack}
+                                                  style={[styles.button, {left: -140}, {width: 80}, {top: -250}]}>
                                     <Text style={styles.buttonText}>Go Back</Text>
                                 </TouchableOpacity>
                                 <Text style={styles.heading}>Search User</Text>
@@ -72,30 +77,39 @@ class SearchUser extends React.Component {
                             <View style={styles.container}>
                                 <TouchableOpacity
                                     onPress={() => this.setState({searchSuccess: !this.state.searchSuccess})}
-                                    style={styles.button}>
-                                    <Text style={styles.buttonText}>Go Back</Text>
+                                    style={[styles.button, {left: -110}, {top: 60}]}>
+                                    < Text style={styles.buttonText}>Go Back</Text>
                                 </TouchableOpacity>
-                                <Text style={styles.heading}>Results</Text>
-                                {this.state.responseList.map((users) => (
-                                    <View key={users.id}>
-                                        <TouchableOpacity onPress={() => {
-                                            this.setState({
-                                                usernameTo: users.username,
-                                                chooseFriend: true,
-                                                secretFrom: this.props.secretFromLogin,
-                                            })
-                                        }} style={[styles.button, {width: 150}]}>
-                                            <Text style={styles.buttonText}>
-                                                {users.username}
-                                            </Text>
-                                        </TouchableOpacity>
+                                {this.state.responseList != null ?
+                                    <View style={styles.container}>
+                                        <Text style={styles.heading}>Results</Text>
+                                        {this.state.responseList.map((users) => (
+                                            <View key={users.id}>
+                                                <TouchableOpacity onPress={() => {
+                                                    this.setState({
+                                                        usernameTo: users.username,
+                                                        chooseFriend: true,
+                                                        secretFrom: this.props.secretFromLogin,
+                                                    })
+                                                }} style={[styles.button, {width: 150}]}>
+                                                    <Text style={styles.buttonText}>
+                                                        {users.username}
+                                                    </Text>
+                                                </TouchableOpacity>
+                                            </View>
+                                        ))}
                                     </View>
-                                ))}
+                                    :
+                                    <View>
+                                        <Text style={styles.heading}> No results</Text>
+                                    </View>
+                                }
                             </View>
                         }
                     </View>
                     :
                     <SendFriendRequest stateFromSearch={this.state}
+                                       domain={this.state.apiDomain}
                                        goBack={this.goBack}>
                     </SendFriendRequest>
                 }
@@ -121,21 +135,17 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: '#ccc',
         borderRadius: 5,
-        padding: 5,
+        padding: 10,
         marginBottom: 10,
         width: 200,
+        backgroundColor: '#ffffff',
     },
     button: {
-        backgroundColor: 'skyblue',
+        backgroundColor: "#ffffff",
         padding: 10,
         borderRadius: 5,
-        marginBottom: 5,
-    },
-    text: {
-        fontSize: 18,
-        padding: 10,
-        borderRadius: 5,
-        width: 180,
+        marginBottom: 10,
+        width: 100,
     },
     buttonText: {
         color: 'black',
