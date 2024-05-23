@@ -11,7 +11,7 @@ class App extends React.Component {
         signUp: false,
         login: false,
         showButtons: false,
-        test: false,
+        test: true,
     }
 
     goBack = () => {
