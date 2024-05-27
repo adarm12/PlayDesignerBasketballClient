@@ -1,8 +1,9 @@
 import React from 'react';
-import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
+import {View, Text, TouchableOpacity} from 'react-native';
 import LoginPage from "./LoginPage";
 import SignUp from "./SignUp";
 import Tests from "./Tests";
+import generalStyle from "./GeneralStyle";
 
 class App extends React.Component {
 
@@ -11,7 +12,7 @@ class App extends React.Component {
         signUp: false,
         login: false,
         showButtons: false,
-        test: true,
+        test: false,
     }
 
     goBack = () => {
@@ -24,27 +25,27 @@ class App extends React.Component {
 
     render() {
         return (
-            <View style={styles.container}>
+            <View style={generalStyle.container}>
                 {this.state.test ?
                     <View>
                         <Tests/>
                     </View>
                     :
-                    <View style={styles.container}>
+                    <View style={generalStyle.container}>
                         {!this.state.showButtons ?
-                            <View style={styles.container}>
-                                <Text style={styles.heading}>Play Designer Basketball</Text>
-                                <TouchableOpacity style={styles.button}
+                            <View style={generalStyle.container}>
+                                <Text style={generalStyle.heading}>Play Designer Basketball</Text>
+                                <TouchableOpacity style={generalStyle.button}
                                                   onPress={() => this.setState({signUp: true, showButtons: true})}>
-                                    <Text style={styles.buttonText}>Sign Up</Text>
+                                    <Text style={generalStyle.buttonText}>Sign Up</Text>
                                 </TouchableOpacity>
-                                <TouchableOpacity style={styles.button}
+                                <TouchableOpacity style={generalStyle.button}
                                                   onPress={() => this.setState({login: true, showButtons: true})}>
-                                    <Text style={styles.buttonText}>Log In</Text>
+                                    <Text style={generalStyle.buttonText}>Log In</Text>
                                 </TouchableOpacity>
                             </View>
                             :
-                            <View style={styles.container}>
+                            <View style={generalStyle.container}>
                                 {this.state.signUp ?
                                     <SignUp goBack={this.goBack}
                                             domain={this.state.apiDomain}
@@ -68,31 +69,4 @@ class App extends React.Component {
         );
     }
 }
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center',
-        backgroundColor: "#067b8f"
-    },
-    heading: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        marginBottom: 20,
-    },
-    button: {
-        backgroundColor: "#ffffff",
-        padding: 10,
-        borderRadius: 5,
-        marginBottom: 10,
-        width: 100,
-    },
-    buttonText: {
-        color: 'black',
-        fontWeight: 'bold',
-        textAlign: 'center',
-    },
-});
-
 export default App;

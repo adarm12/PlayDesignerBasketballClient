@@ -1,30 +1,32 @@
-import {View, Text, StyleSheet, TextInput, TouchableOpacity} from "react-native";
+import {View, Text, TextInput, TouchableOpacity} from "react-native";
 import React from 'react'
 import {sendApiPostRequest} from "./ApiRequests";
 import SearchUser from "./SearchUser";
 import ShowRequesters from "./ShowRequesters";
+import generalStyle from "./GeneralStyle";
+import AddPlay from "./AddPlay";
 
 class LoginPage extends React.Component {
     state = {
         apiDomain: "",
         username: null,
         password: null,
-        loginSuccess: false,
+        loginSuccess: true,
         userSecret: "",
         errorCode: "",
         sendRequest: false,
         acceptRequest: false,
+        addPlay: false,
     }
 
     componentDidMount() {
         this.setState({apiDomain: this.props.domain})
     }
 
-
     login = () => {
         console.log(this.state.username);
         console.log(this.state.password);
-        sendApiPostRequest(this.state.apiDomain +'/login', {
+        sendApiPostRequest(this.state.apiDomain + '/login', {
             username: this.state.username,
             password: this.state.password,
         }, (response) => {
@@ -69,56 +71,62 @@ class LoginPage extends React.Component {
             this.setState({acceptRequest: !this.state.acceptRequest})
         else if (this.state.sendRequest)
             this.setState({sendRequest: !this.state.sendRequest})
+        else if (this.state.addPlay)
+            this.setState({addPlay: !this.state.addPlay})
     }
 
     render() {
         return (
-            <View style={styles.container}>
+            <View style={generalStyle.container}>
                 {!this.state.loginSuccess ?
-                    <View style={styles.container}>
-                        <TouchableOpacity onPress={this.props.goBack} style={styles.buttonGoBack}>
-                            <Text style={styles.buttonText}>Go Back</Text>
+                    <View style={generalStyle.container}>
+                        <TouchableOpacity onPress={this.props.goBack} style={generalStyle.button}>
+                            <Text style={generalStyle.buttonText}>Go Back</Text>
                         </TouchableOpacity>
-                        <Text style={styles.heading}>Login</Text>
+                        <Text style={generalStyle.heading}>Login</Text>
                         <TextInput
-                            style={styles.input}
+                            style={generalStyle.input}
                             placeholder="username"
                             secureTextEntry={true}
                             value={this.state.username}
                             onChangeText={(text) => this.onValueChange("username", text)}
                         />
                         <TextInput
-                            style={styles.input}
+                            style={generalStyle.input}
                             placeholder="Password"
                             secureTextEntry={true}
                             value={this.state.password}
                             onChangeText={(text) => this.onValueChange("password", text)}
                         />
-                        <TouchableOpacity onPress={this.login} style={styles.button}>
-                            <Text style={styles.buttonText}>Submit</Text>
+                        <TouchableOpacity onPress={this.login} style={generalStyle.button}>
+                            <Text style={generalStyle.buttonText}>Submit</Text>
                         </TouchableOpacity>
                         <Text>{this.errorCodeMessage()}</Text>
                     </View>
                     :
-                    <View style={styles.container}>
-                        {!this.state.acceptRequest && !this.state.sendRequest ?
-                            <View style={styles.container}>
+                    <View style={generalStyle.container}>
+                        {!this.state.acceptRequest && !this.state.sendRequest && !this.state.addPlay ?
+                            <View style={generalStyle.container}>
                                 <TouchableOpacity onPress={() => this.setState({
                                     loginSuccess: !this.state.loginSuccess
-                                })} style={styles.button}>
-                                    <Text style={styles.buttonText}>Go Back</Text>
+                                })} style={generalStyle.button}>
+                                    <Text style={generalStyle.buttonText}>Go Back</Text>
                                 </TouchableOpacity>
                                 <TouchableOpacity onPress={() => this.setState({sendRequest: true})}
-                                                  style={[styles.button, {width: 200}]}>
-                                    <Text style={styles.buttonText}>Send Friend Request</Text>
+                                                  style={[generalStyle.button, {width: 200}]}>
+                                    <Text style={generalStyle.buttonText}>Send Friend Request</Text>
                                 </TouchableOpacity>
                                 <TouchableOpacity onPress={() => this.setState({acceptRequest: true})}
-                                                  style={[styles.button, {width: 200}]}>
-                                    <Text style={styles.buttonText}>Accept Friend Request</Text>
+                                                  style={[generalStyle.button, {width: 200}]}>
+                                    <Text style={generalStyle.buttonText}>Accept Friend Request</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity onPress={() => this.setState({addPlay: true})}
+                                                  style={[generalStyle.button, {width: 200}]}>
+                                    <Text style={generalStyle.buttonText}>Add New Play</Text>
                                 </TouchableOpacity>
                             </View>
                             :
-                            <View style={styles.container}>
+                            <View style={generalStyle.container}>
                                 {this.state.sendRequest ?
                                     <SearchUser secretFromLogin={this.state.userSecret}
                                                 domain={this.state.apiDomain}
@@ -135,6 +143,14 @@ class LoginPage extends React.Component {
                                     :
                                     <View></View>
                                 }
+                                {this.state.addPlay ?
+                                    <AddPlay secretFromLogin={this.state.userSecret}
+                                                    domain={this.state.apiDomain}
+                                                    goBack={this.goBack}>
+                                    </AddPlay>
+                                    :
+                                    <View></View>
+                                }
                             </View>
                         }
                     </View>
@@ -144,49 +160,6 @@ class LoginPage extends React.Component {
         )
     }
 }
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    heading: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        marginBottom: 20,
-    },
-    input: {
-        borderWidth: 1,
-        borderColor: '#ccc',
-        borderRadius: 5,
-        padding: 10,
-        marginBottom: 10,
-        width: 200,
-        backgroundColor: '#ffffff',
-    },
-    button: {
-        backgroundColor: "#ffffff",
-        padding: 10,
-        borderRadius: 5,
-        marginBottom: 10,
-        width: 100,
-    },
-    buttonGoBack: {
-        backgroundColor: "#ffffff",
-        padding: 10,
-        borderRadius: 5,
-        position: 'absolute',
-        top: 60,
-        left: -80,
-        width: 80,
-    },
-    buttonText: {
-        color: 'black',
-        fontWeight: 'bold',
-        textAlign: 'center',
-    },
-});
 
 
 export default LoginPage;

@@ -1,8 +1,9 @@
 import {StatusBar} from 'expo-status-bar';
 import React from 'react';
-import {View, Text, StyleSheet, TextInput, TouchableOpacity} from 'react-native';
+import {View, Text, TextInput, TouchableOpacity} from 'react-native';
 import {sendApiPostRequest} from "./ApiRequests";
 import SendFriendRequest from "./SendFriendRequest"
+import generalStyle from "./GeneralStyle";
 
 class SearchUser extends React.Component {
     state = {
@@ -14,24 +15,6 @@ class SearchUser extends React.Component {
         chooseFriend: false,
         responseList: null,
         message: "",
-    }
-
-    search = () => {
-        console.log("secret" + this.props.secretFromLogin);
-        console.log(this.state.partOfUsername);
-        sendApiPostRequest(this.state.apiDomain +'/search-user', {
-            secretFrom: this.props.secretFromLogin,
-            partOfUsername: this.state.partOfUsername,
-        }, (response) => {
-            console.log('Response:', response.data.users);
-            this.setState({responseList: response.data.users});
-            if (response.data.success) {
-                this.setState({searchSuccess: true});
-            } else {
-                if (response.data.errorCode === 14)
-                    this.setState({message: "No search"});
-            }
-        })
     }
 
     componentDidMount() {
@@ -48,24 +31,42 @@ class SearchUser extends React.Component {
         });
     }
 
+    search = () => {
+        console.log("secret" + this.props.secretFromLogin);
+        console.log(this.state.partOfUsername);
+        sendApiPostRequest(this.state.apiDomain + '/search-user', {
+            secretFrom: this.props.secretFromLogin,
+            partOfUsername: this.state.partOfUsername,
+        }, (response) => {
+            console.log('Response:', response.data.users);
+            this.setState({responseList: response.data.users});
+            if (response.data.success) {
+                this.setState({searchSuccess: true});
+            } else {
+                if (response.data.errorCode === 14)
+                    this.setState({message: "No search"});
+            }
+        })
+    }
+
     render() {
         return (
-            <View style={styles.container}>
+            <View style={generalStyle.container}>
                 {!this.state.chooseFriend ?
-                    <View style={styles.container}>
+                    <View style={generalStyle.container}>
                         {!this.state.searchSuccess ?
-                            <View style={styles.container}>
+                            <View style={generalStyle.container}>
                                 <TouchableOpacity onPress={this.props.goBack}
-                                                  style={[styles.button, {left: -140}, {width: 80}, {top: -250}]}>
-                                    <Text style={styles.buttonText}>Go Back</Text>
+                                                  style={[generalStyle.button]}>
+                                    <Text style={generalStyle.buttonText}>Go Back</Text>
                                 </TouchableOpacity>
-                                <Text style={styles.heading}>Search User</Text>
+                                <Text style={generalStyle.heading}>Search User</Text>
                                 <TextInput value={this.state.partOfUsername}
                                            placeholder="Enter username to search"
                                            onChangeText={(text) => this.onValueChange("partOfUsername", text)}
-                                           style={styles.input}></TextInput>
-                                <TouchableOpacity onPress={this.search} style={styles.button}>
-                                    <Text style={styles.buttonText}>
+                                           style={generalStyle.input}></TextInput>
+                                <TouchableOpacity onPress={this.search} style={generalStyle.button}>
+                                    <Text style={generalStyle.buttonText}>
                                         Search
                                     </Text>
                                 </TouchableOpacity>
@@ -74,15 +75,15 @@ class SearchUser extends React.Component {
                                 </Text>
                             </View>
                             :
-                            <View style={styles.container}>
+                            <View style={generalStyle.container}>
                                 <TouchableOpacity
                                     onPress={() => this.setState({searchSuccess: !this.state.searchSuccess})}
-                                    style={[styles.button, {left: -110}, {top: 60}]}>
-                                    < Text style={styles.buttonText}>Go Back</Text>
+                                    style={[generalStyle.button]}>
+                                    < Text style={generalStyle.buttonText}>Go Back</Text>
                                 </TouchableOpacity>
                                 {this.state.responseList != null ?
-                                    <View style={styles.container}>
-                                        <Text style={styles.heading}>Results</Text>
+                                    <View style={generalStyle.container}>
+                                        <Text style={generalStyle.heading}>Results</Text>
                                         {this.state.responseList.map((users) => (
                                             <View key={users.id}>
                                                 <TouchableOpacity onPress={() => {
@@ -91,8 +92,8 @@ class SearchUser extends React.Component {
                                                         chooseFriend: true,
                                                         secretFrom: this.props.secretFromLogin,
                                                     })
-                                                }} style={[styles.button, {width: 150}]}>
-                                                    <Text style={styles.buttonText}>
+                                                }} style={[generalStyle.button, {width: 150}]}>
+                                                    <Text style={generalStyle.buttonText}>
                                                         {users.username}
                                                     </Text>
                                                 </TouchableOpacity>
@@ -100,16 +101,13 @@ class SearchUser extends React.Component {
                                         ))}
                                     </View>
                                     :
-                                    <View>
-                                        <Text style={styles.heading}> No results</Text>
-                                    </View>
+                                    <Text style={generalStyle.heading}> No results</Text>
                                 }
                             </View>
                         }
                     </View>
                     :
                     <SendFriendRequest stateFromSearch={this.state}
-                                       domain={this.state.apiDomain}
                                        goBack={this.goBack}>
                     </SendFriendRequest>
                 }
@@ -118,40 +116,5 @@ class SearchUser extends React.Component {
         );
     }
 }
-
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    heading: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        marginBottom: 20,
-    },
-    input: {
-        borderWidth: 1,
-        borderColor: '#ccc',
-        borderRadius: 5,
-        padding: 10,
-        marginBottom: 10,
-        width: 200,
-        backgroundColor: '#ffffff',
-    },
-    button: {
-        backgroundColor: "#ffffff",
-        padding: 10,
-        borderRadius: 5,
-        marginBottom: 10,
-        width: 100,
-    },
-    buttonText: {
-        color: 'black',
-        fontWeight: 'bold',
-        textAlign: 'center',
-    },
-});
 
 export default SearchUser;

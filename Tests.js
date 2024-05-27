@@ -57,19 +57,20 @@ class Tests extends React.Component {
                         )
                     })
                 }
-                {/*<TouchableOpacity onPress={() => {*/}
-                {/*    axios.get(, , {*/}
-                {/*        plays: JSON.stringify(this.state.phases)*/}
-                {/*    })*/}
-                {/*}} style={{*/}
-                {/*    top: 300,*/}
-                {/*    left: 300*/}
-                {/*}} >*/}
-                {/*    <Text>PRESS</Text>*/}
-                {/*</TouchableOpacity>*/}
+                <TouchableOpacity onPress={() => {
+                    // axios.get(, , {
+                    //     plays: JSON.stringify(this.state.phases)
+                    // })
+                }} style={{
+                    top: 300,
+                    left: 300
+                }} >
+                    <Text>PRESS</Text>
+                </TouchableOpacity>
 
             </View>
         );
     }
 }
+
 export default Tests;

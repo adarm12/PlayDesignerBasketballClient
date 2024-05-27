@@ -1,6 +1,7 @@
 import React from 'react';
-import {View, Text, StyleSheet, TextInput, TouchableOpacity} from 'react-native';
+import {View, Text, TextInput, TouchableOpacity} from 'react-native';
 import {sendApiPostRequest} from "./ApiRequests";
+import generalStyle from "./GeneralStyle";
 
 class SignUp extends React.Component {
     state = {
@@ -20,9 +21,9 @@ class SignUp extends React.Component {
         this.setState({[key]: value});
     }
 
-    // same = () => {
-    //     return this.state.repeatPassword === this.state.password;
-    // }
+    same = () => {
+        return this.state.repeatPassword === this.state.password;
+    }
 
     signUp = () => {
         console.log(this.state.username);
@@ -76,78 +77,39 @@ class SignUp extends React.Component {
 
     render() {
         return (
-            <View style={styles.container}>
-                <TouchableOpacity onPress={this.props.goBack} style={styles.button}>
-                    <Text style={styles.buttonText}>Go Back</Text>
+            <View style={generalStyle.container}>
+                <TouchableOpacity onPress={this.props.goBack} style={generalStyle.button}>
+                    <Text style={generalStyle.buttonText}>Go Back</Text>
                 </TouchableOpacity>
-                <Text style={styles.heading}>Sign Up</Text>
+                <Text style={generalStyle.heading}>Sign Up</Text>
                 <TextInput
-                    style={styles.input}
+                    style={generalStyle.input}
                     placeholder="Username"
                     value={this.state.username}
                     onChangeText={(text) => this.onValueChange("username", text)}
                 />
                 <TextInput
-                    style={styles.input}
+                    style={generalStyle.input}
                     placeholder="Password"
                     secureTextEntry={true}
                     value={this.state.password}
                     onChangeText={(text) => this.onValueChange("password", text)}
                 />
                 <TextInput
-                    style={[styles.input, {backgroundColor: (this.state.errorCode === 2) ? 'green' : 'red'}]}
+                    style={[generalStyle.input, {backgroundColor: this.same() ? 'green' : 'red'}]}
                     placeholder="Repeat Password"
                     secureTextEntry={true}
                     value={this.state.repeatPassword}
                     onChangeText={(text) => this.onValueChange("repeatPassword", text)}
                 />
-                <TouchableOpacity onPress={this.signUp} style={styles.button}>
-                    <Text style={styles.buttonText}>Submit</Text>
+                <TouchableOpacity onPress={this.signUp} style={generalStyle.button}>
+                    <Text style={generalStyle.buttonText}>Submit</Text>
                 </TouchableOpacity>
                 <Text>{this.errorCodeMessage()}</Text>
-                <TouchableOpacity onPress={() => this.setState({login: !this.state.login})}
-                                  style={styles.button}>
-                    <Text style={styles.buttonText}>Login</Text>
-                </TouchableOpacity>
-                }
             </View>
         );
     }
 }
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    heading: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        marginBottom: 20,
-    },
-    input: {
-        borderWidth: 1,
-        borderColor: '#ccc',
-        borderRadius: 5,
-        padding: 10,
-        marginBottom: 10,
-        width: 200,
-        backgroundColor: '#ccc',
-    },
-    button: {
-        backgroundColor: "#ffffff",
-        padding: 10,
-        borderRadius: 5,
-        marginBottom: 10,
-        width: 100,
-    },
-    buttonText: {
-        color: 'black',
-        fontWeight: 'bold',
-        textAlign: 'center',
-    },
-});
 
 export default SignUp;
 

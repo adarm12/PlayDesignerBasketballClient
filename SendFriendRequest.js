@@ -1,24 +1,21 @@
 import React from 'react';
-import {View, Text, StyleSheet, TextInput, TouchableOpacity,} from 'react-native';
+import {View, Text, TouchableOpacity,} from 'react-native';
 import {sendApiPostRequest} from "./ApiRequests";
 import {StatusBar} from "expo-status-bar/build/StatusBar";
+import generalStyle from "./GeneralStyle";
 
 class SendFriendRequest extends React.Component {
     state = {
-        apiDomain: "",
         response: "",
         requestSuccess: false,
         errorCode: "",
     }
 
-    componentDidMount() {
-        this.setState({apiDomain: this.props.domain})
-    }
 
-    request = () => {
+    sendRequest = () => {
         console.log("secret:" + this.props.stateFromSearch.secretFrom);
         console.log("usernameTo:" + this.props.stateFromSearch.usernameTo);
-        sendApiPostRequest(this.state.apiDomain +'/request-friend', {
+        sendApiPostRequest(this.props.stateFromSearch.apiDomain + '/request-friend', {
             secretFrom: this.props.stateFromSearch.secretFrom,
             usernameTo: this.props.stateFromSearch.usernameTo,
         }, (response) => {
@@ -35,7 +32,7 @@ class SendFriendRequest extends React.Component {
         let errorMessage = "";
         switch (this.state.errorCode) {
             case -1:
-                errorMessage = "Your friend request has been send";
+                errorMessage = "Successfully sent";
                 break;
             case 11:
                 errorMessage = "Already sent request";
@@ -49,64 +46,23 @@ class SendFriendRequest extends React.Component {
 
     render() {
         return (
-            <View style={styles.container}>
-                <TouchableOpacity onPress={this.props.goBack} style={styles.button}>
-                    <Text style={styles.buttonText}>Go Back</Text>
+            <View style={generalStyle.container}>
+                <TouchableOpacity onPress={this.props.goBack} style={generalStyle.button}>
+                    <Text style={generalStyle.buttonText}>Go Back</Text>
                 </TouchableOpacity>
-                <Text style={styles.heading}>Friend Request</Text>
-                <Text style={styles.text}>user: {this.props.stateFromSearch.usernameTo}</Text>
-                <TouchableOpacity onPress={this.request} style={styles.button}>
-                    <Text style={styles.buttonText}>
+                <Text style={generalStyle.heading}>Friend Request</Text>
+                <Text style={generalStyle.text}>User: {this.props.stateFromSearch.usernameTo}</Text>
+                <TouchableOpacity onPress={this.sendRequest} style={generalStyle.button}>
+                    <Text style={generalStyle.buttonText}>
                         Request
                     </Text>
                 </TouchableOpacity>
-                <Text style={styles.text}> {this.errorCodeMessage()}</Text>
+                <Text style={generalStyle.text}> {this.errorCodeMessage()}</Text>
                 <StatusBar style="auto"/>
             </View>
         );
     }
 
 }
-
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    heading: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        marginBottom: 20,
-    },
-    input: {
-        borderWidth: 1,
-        borderColor: '#ccc',
-        borderRadius: 5,
-        padding: 10,
-        marginBottom: 10,
-        width: 200,
-        backgroundColor: '#ffffff',
-    },
-    button: {
-        backgroundColor: "#ffffff",
-        padding: 10,
-        borderRadius: 5,
-        marginBottom: 10,
-        width: 100,
-    },
-    text: {
-        fontSize: 20,
-        marginBottom: 10,
-        fontWeight: 'bold',
-
-    },
-    buttonText: {
-        color: 'black',
-        fontWeight: 'bold',
-        textAlign: 'center',
-    },
-});
 
 export default SendFriendRequest;
