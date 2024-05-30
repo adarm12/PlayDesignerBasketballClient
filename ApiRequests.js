@@ -18,3 +18,15 @@ export const sendApiPostRequest = (request, params, callback) => {
         }
     })
 }
+
+export const sendApiPostRawBody = (request, params, callback) => {
+    axios({
+        method: "post",
+        url: request,
+        data: params,
+        params: {},
+
+    }).then(response => {
+        console.log(response.data)
+    })
+}

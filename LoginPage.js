@@ -11,7 +11,7 @@ class LoginPage extends React.Component {
         apiDomain: "",
         username: null,
         password: null,
-        loginSuccess: true,
+        loginSuccess: false,
         userSecret: "",
         errorCode: "",
         sendRequest: false,

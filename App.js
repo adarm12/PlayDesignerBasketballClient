@@ -8,11 +8,11 @@ import generalStyle from "./GeneralStyle";
 class App extends React.Component {
 
     state = {
-        apiDomain: "",
+        apiDomain: "http://10.0.0.8:8989",
         signUp: false,
         login: false,
         showButtons: false,
-        test: false,
+        test: true,
     }
 
     goBack = () => {
