@@ -72,7 +72,10 @@ class Tests extends Component {
             action: 0
         }));
 
-        sendApiPostRawBody("http://10.0.0.8:8989" + '/test', {
+        sendApiPostRawBody("http://10.0.0.8:8989" + '/add-phase', {
+            secret: "630d73f0-16b7-4ecf-b44f-4192dfb96d1e",
+            playName: "three",
+            orderNum: 1,
             playerPhases
         }, (response) => {
             console.log('Response:', response.data);
