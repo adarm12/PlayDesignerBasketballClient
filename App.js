@@ -4,6 +4,7 @@ import LoginPage from "./LoginPage";
 import SignUp from "./SignUp";
 import Tests from "./Tests";
 import generalStyle from "./GeneralStyle";
+import DraggableCircle from "./DraggableCircle";
 
 class App extends React.Component {
 

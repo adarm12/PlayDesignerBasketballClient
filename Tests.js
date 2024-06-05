@@ -1,21 +1,24 @@
 import React, { Component } from 'react';
-import { View, TouchableOpacity, Text, StyleSheet, Dimensions } from 'react-native';
+import {View, TouchableOpacity, Text, StyleSheet, Dimensions, PanResponder} from 'react-native';
 import Svg, { Circle, Text as SvgText } from 'react-native-svg';
 import axios from 'axios';
 import Draggable from 'react-native-draggable';
+import {GestureHandlerRootView} from "react-native-gesture-handler";
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
 
 class Tests extends Component {
+    circleRadius = 25;
+
     state = {
         setInitialPosition: true,
         oldPhases: [],
         currentPhase: [
-            { x: 0, y: 0, action: 0, draggable: true },
-            { x: 0, y: 0, action: 0, draggable: true },
-            { x: 0, y: 0, action: 0, draggable: true },
-            { x: 0, y: 0, action: 0, draggable: true },
-            { x: 0, y: 0, action: 0, draggable: true }
+            { x: 30, y: 200, action: 0, draggable: true },
+            { x: 30, y: 260, action: 0, draggable: true },
+            { x: 30, y: 320, action: 0, draggable: true },
+            { x: 30, y: 380, action: 0, draggable: true },
+            { x: 30, y: 440, action: 0, draggable: true }
         ],
         selectedCircle: null,
         menuVisible: false,
@@ -24,6 +27,25 @@ class Tests extends Component {
     componentDidMount() {
         console.log("Initial positions:", this.state.currentPhase);
     }
+
+    circleRadius = 25; // Radius of the circle
+
+    panResponders = this.state.currentPhase.map((circle, index) =>
+        PanResponder.create({
+            onStartShouldSetPanResponder: () => this.state.currentPhase[index].draggable,
+            onPanResponderMove: (event, gestureState) => {
+                if (this.state.currentPhase[index].draggable) {
+                    const newPhase = [...this.state.currentPhase];
+                    newPhase[index] = {
+                        ...newPhase[index],
+                        x: gestureState.moveX,
+                        y: gestureState.moveY,
+                    };
+                    this.setState({ currentPhase: newPhase });
+                }
+            },
+        })
+    );
 
     sendPhaseToServer = () => {
         const playerPhases = this.state.currentPhase.map((phase, index) => ({
@@ -102,51 +124,48 @@ class Tests extends Component {
         }
     };
 
-    handleDragRelease = (index, event, gestureState) => {
-        if (this.state.currentPhase[index].draggable) {
-            const newX = this.state.currentPhase[index].x + gestureState.dx;
-            const newY = this.state.currentPhase[index].y + gestureState.dy;
 
-            console.log(newX+","+newY);
-            this.setState(prevState => {
-                const newPhase = [...prevState.currentPhase];
-                newPhase[index].x = newX;
-                newPhase[index].y = newY;
-                return { currentPhase: newPhase };
-            });
-        }
-    };
 
     render() {
         return (
             <View style={styles.container} height={screenHeight} width={screenWidth}>
                 {this.state.currentPhase.map((item, index) => (
-                    <Draggable
-                        key={index}
-                        disabled={!item.draggable}
-                        onDragRelease={(e, gestureState) => this.handleDragRelease(index, e, gestureState)}
-                    >
-                        <Svg height="100" width="100" onPress={() => this.handleCircleClick(index)}>
-                            <Circle
-                                cx="50"
-                                cy="50"
-                                r="25"
-                                stroke="black"
-                                strokeWidth="2.5"
-                                fill="rgba(0, 0, 0, 0.05)"
-                            />
-                            <SvgText
-                                x="50"
-                                y="55"
-                                fontSize="25"
-                                fill="black"
-                                textAnchor="middle"
-                                fontWeight="bold"
+                    <GestureHandlerRootView key={index} style={styles.gestureHandler}>
+                        <TouchableOpacity onPress={() => this.handleCircleClick(index)}>
+                            <View
+                                {...this.panResponders[index].panHandlers}
+                                style={[
+                                    styles.circle,
+                                    {
+                                        left: item.x - this.circleRadius,
+                                        top: item.y - this.circleRadius,
+                                    },
+                                ]}
                             >
-                                {index + 1}
-                            </SvgText>
-                        </Svg>
-                    </Draggable>
+                                <Svg height={60} width={60}>
+                                    <Circle
+                                        cx="30"
+                                        cy="30"
+                                        r={25}
+                                        stroke="black"
+                                        strokeWidth="2.5"
+                                        fill="rgba(0, 0, 0, 0.05)"
+                                    />
+                                    <SvgText
+                                        x="30"
+                                        y="35"
+                                        fontSize="25"
+                                        fill="black"
+                                        textAnchor="middle"
+                                        fontWeight="bold"
+                                    >
+                                        {index + 1}
+                                    </SvgText>
+                                </Svg>
+
+                            </View>
+                        </TouchableOpacity>
+                    </GestureHandlerRootView>
                 ))}
 
                 <TouchableOpacity
@@ -194,7 +213,9 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#4B9CD3', // Changed background color to make circles more visible
     },
-
+    gestureHandler: {
+        position: 'absolute',
+    },
     sendPhaseButton: {
         position: 'absolute',
         bottom: 50,
