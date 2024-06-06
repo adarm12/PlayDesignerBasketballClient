@@ -1,26 +1,28 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import {View, TouchableOpacity, Text, StyleSheet, Dimensions, PanResponder} from 'react-native';
-import Svg, { Circle, Text as SvgText } from 'react-native-svg';
-import axios from 'axios';
+import Svg, {Circle, Text as SvgText} from 'react-native-svg';
 import {GestureHandlerRootView} from "react-native-gesture-handler";
+import {sendApiPostRequest} from "./ApiRequests";
 
-const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
+const {width: screenWidth, height: screenHeight} = Dimensions.get('window');
 
-class Tests extends Component {
+class CreatePhase extends Component {
     circleRadius = 25; // Radius of the circle
 
     state = {
+        phaseNum: 1,
         setInitialPosition: true,
         oldPhases: [],
         currentPhase: [
-            { x: 30, y: 200, action: 0, draggable: true },
-            { x: 30, y: 260, action: 0, draggable: true },
-            { x: 30, y: 320, action: 0, draggable: true },
-            { x: 30, y: 380, action: 0, draggable: true },
-            { x: 30, y: 440, action: 0, draggable: true }
+            {x: 30, y: 200, action: 0, draggable: true},
+            {x: 30, y: 260, action: 0, draggable: true},
+            {x: 30, y: 320, action: 0, draggable: true},
+            {x: 30, y: 380, action: 0, draggable: true},
+            {x: 30, y: 440, action: 0, draggable: true}
         ],
         selectedCircle: null,
         menuVisible: false,
+        errorCode: "",
     };
 
     componentDidMount() {
@@ -38,7 +40,7 @@ class Tests extends Component {
                         x: gestureState.moveX,
                         y: gestureState.moveY,
                     };
-                    this.setState({ currentPhase: newPhase });
+                    this.setState({currentPhase: newPhase});
                 }
             },
         })
@@ -52,34 +54,28 @@ class Tests extends Component {
             y: phase.y,
             action: phase.action
         }));
-
-        axios.post("http://10.0.0.8:8989/add-phase", {
-            secret: "630d73f0-16b7-4ecf-b44f-4192dfb96d1e",
-            playName: "three",
+        sendApiPostRequest(this.props.domain + '/add-phase', {
+            secret: this.props.userSecret,
+            playName: this.state.playName,
             orderNum: 1,
             playerPhases
+        }, (response) => {
+            console.log('Response:', response.data);
+            if (response.data.success) {
+                console.log('OK');
+            }
+            this.setState({errorCode: response.data.errorCode});
         })
-            .then(response => {
-                console.log('Response:', response.data);
-                if (response.data.success) {
-                    console.log('OK');
-                }
-                this.setState({ errorCode: response.data.errorCode });
-            })
-            .catch(error => {
-                console.error('Error sending phase data:', error);
-            });
-
         this.prepareNewPhase();
-
-    };
+    }
 
     prepareNewPhase = () => {
         this.setState(prevState => {
             const newPhases = prevState.currentPhase.map(phase => ({
                 ...phase,
                 draggable: false,
-                action: 0
+                action: 0,
+                phaseNum: this.state.phaseNum + 1
             }));
             return {
                 currentPhase: newPhases,
@@ -116,11 +112,10 @@ class Tests extends Component {
                 const newPhase = [...prevState.currentPhase];
                 newPhase[prevState.selectedCircle].action = action;
                 newPhase[prevState.selectedCircle].draggable = true;
-                return { currentPhase: newPhase, menuVisible: false };
+                return {currentPhase: newPhase, menuVisible: false};
             });
         }
     };
-
 
 
     render() {
@@ -170,7 +165,7 @@ class Tests extends Component {
                     onPress={this.createPhase}
                     disabled={this.state.setInitialPosition}
                 >
-                    <Text style={{ color: 'white' }}>Send Phase</Text>
+                    <Text style={{color: 'white'}}>Send Phase</Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity
@@ -178,7 +173,7 @@ class Tests extends Component {
                     onPress={this.setInitialPosition}
                     disabled={!this.state.setInitialPosition}
                 >
-                    <Text style={{ color: 'white' }}>Set initial position</Text>
+                    <Text style={{color: 'white'}}>Set initial position</Text>
                 </TouchableOpacity>
 
                 {this.state.menuVisible && (
@@ -265,5 +260,4 @@ const styles = StyleSheet.create({
     }
 });
 
-export default Tests;
-
+export default CreatePhase;

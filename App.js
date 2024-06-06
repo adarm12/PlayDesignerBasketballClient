@@ -4,12 +4,11 @@ import LoginPage from "./LoginPage";
 import SignUp from "./SignUp";
 import Tests from "./Tests";
 import generalStyle from "./GeneralStyle";
-import DraggableCircle from "./DraggableCircle";
 
 class App extends React.Component {
 
     state = {
-        apiDomain: "http://10.0.0.8:8989",
+        apiDomain: "",
         signUp: false,
         login: false,
         showButtons: false,

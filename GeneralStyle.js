@@ -28,6 +28,16 @@ const generalStyle = StyleSheet.create({
         marginBottom: 10,
         width: 100,
     },
+    goBackButton: {
+        backgroundColor: "#ffffff",
+        borderRadius: 5,
+        padding: 10,
+        alignItems: 'left',
+        marginLeft: -80,
+        marginTop: 50,
+        width: 40,
+        height: 40,
+    },
     buttonText: {
         color: 'black',
         fontWeight: 'bold',

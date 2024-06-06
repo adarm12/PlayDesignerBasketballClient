@@ -4,7 +4,7 @@ import {sendApiPostRequest} from "./ApiRequests";
 import SearchUser from "./SearchUser";
 import ShowRequesters from "./ShowRequesters";
 import generalStyle from "./GeneralStyle";
-import AddPlay from "./AddPlay";
+import CreatePlay from "./CreatePlay";
 
 class LoginPage extends React.Component {
     state = {
@@ -16,7 +16,7 @@ class LoginPage extends React.Component {
         errorCode: "",
         sendRequest: false,
         acceptRequest: false,
-        addPlay: false,
+        createPlay: false,
     }
 
     componentDidMount() {
@@ -71,8 +71,8 @@ class LoginPage extends React.Component {
             this.setState({acceptRequest: !this.state.acceptRequest})
         else if (this.state.sendRequest)
             this.setState({sendRequest: !this.state.sendRequest})
-        else if (this.state.addPlay)
-            this.setState({addPlay: !this.state.addPlay})
+        else if (this.state.createPlay)
+            this.setState({addPlay: !this.state.createPlay})
     }
 
     render() {
@@ -105,7 +105,7 @@ class LoginPage extends React.Component {
                     </View>
                     :
                     <View style={generalStyle.container}>
-                        {!this.state.acceptRequest && !this.state.sendRequest && !this.state.addPlay ?
+                        {!this.state.acceptRequest && !this.state.sendRequest && !this.state.createPlay ?
                             <View style={generalStyle.container}>
                                 <TouchableOpacity onPress={() => this.setState({
                                     loginSuccess: !this.state.loginSuccess
@@ -120,9 +120,9 @@ class LoginPage extends React.Component {
                                                   style={[generalStyle.button, {width: 200}]}>
                                     <Text style={generalStyle.buttonText}>Accept Friend Request</Text>
                                 </TouchableOpacity>
-                                <TouchableOpacity onPress={() => this.setState({addPlay: true})}
+                                <TouchableOpacity onPress={() => this.setState({createPlay: true})}
                                                   style={[generalStyle.button, {width: 200}]}>
-                                    <Text style={generalStyle.buttonText}>Add New Play</Text>
+                                    <Text style={generalStyle.buttonText}>Create New Play</Text>
                                 </TouchableOpacity>
                             </View>
                             :
@@ -143,11 +143,11 @@ class LoginPage extends React.Component {
                                     :
                                     <View></View>
                                 }
-                                {this.state.addPlay ?
-                                    <AddPlay secretFromLogin={this.state.userSecret}
-                                                    domain={this.state.apiDomain}
-                                                    goBack={this.goBack}>
-                                    </AddPlay>
+                                {this.state.createPlay ?
+                                    <CreatePlay secretFromLogin={this.state.userSecret}
+                                                domain={this.state.apiDomain}
+                                                goBack={this.goBack}>
+                                    </CreatePlay>
                                     :
                                     <View></View>
                                 }
