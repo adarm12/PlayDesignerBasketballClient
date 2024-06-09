@@ -43,6 +43,17 @@ const generalStyle = StyleSheet.create({
         fontWeight: 'bold',
         textAlign: 'center',
     },
+    arrow: {
+        width: 0,
+        height: 0,
+        borderTopWidth: 10,
+        borderTopColor: 'transparent',
+        borderBottomWidth: 10,
+        borderBottomColor: 'transparent',
+        borderLeftWidth: 10,
+        borderLeftColor: 'black'
+    },
+
 });
 
 export default generalStyle;

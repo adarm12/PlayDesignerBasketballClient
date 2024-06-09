@@ -4,6 +4,7 @@ import LoginPage from "./LoginPage";
 import SignUp from "./SignUp";
 import Tests from "./Tests";
 import generalStyle from "./GeneralStyle";
+import Arrows from "./Arrows";
 
 class App extends React.Component {
 
@@ -28,7 +29,7 @@ class App extends React.Component {
             <View style={generalStyle.container}>
                 {this.state.test ?
                     <View>
-                        <Tests/>
+                        <Arrows/>
                     </View>
                     :
                     <View style={generalStyle.container}>
