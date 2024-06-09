@@ -2,7 +2,6 @@ import React from 'react';
 import {View, Text, TouchableOpacity} from 'react-native';
 import LoginPage from "./LoginPage";
 import SignUp from "./SignUp";
-import Tests from "./Tests";
 import generalStyle from "./GeneralStyle";
 import Arrows from "./Arrows";
 
