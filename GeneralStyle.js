@@ -7,6 +7,12 @@ const generalStyle = StyleSheet.create({
         justifyContent: 'center',
         backgroundColor: "#067b8f"
     },
+    arrowContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'transparent',
+    },
     heading: {
         fontSize: 24,
         fontWeight: 'bold',

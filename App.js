@@ -4,6 +4,11 @@ import LoginPage from "./LoginPage";
 import SignUp from "./SignUp";
 import generalStyle from "./GeneralStyle";
 import Arrows from "./Arrows";
+import Tests from "./Tests";
+import CutArrow from "./CutArrow";
+import DribbleArrow from "./DribbleArrow";
+import ScreenArrow from "./ScreenArrow";
+import PassArrow from "./PassArrow";
 
 class App extends React.Component {
 
@@ -28,7 +33,7 @@ class App extends React.Component {
             <View style={generalStyle.container}>
                 {this.state.test ?
                     <View>
-                        <Arrows/>
+                        <PassArrow x0={360} y0={500} x1={100} y1={100}/>
                     </View>
                     :
                     <View style={generalStyle.container}>
