@@ -60,7 +60,7 @@ class CreatePlay extends React.Component {
                                           style={[generalStyle.button]}>
                             <Text style={generalStyle.buttonText}>Go Back</Text>
                         </TouchableOpacity>
-                        <Text style={generalStyle.heading}>Add New Play</Text>
+                        <Text style={generalStyle.heading}>Create New Play</Text>
                         <TextInput
                             style={generalStyle.input}
                             placeholder="Play Name"
@@ -77,7 +77,8 @@ class CreatePlay extends React.Component {
                     <View>
                         <CreatePhase domain={this.state.apiDomain}
                                      playName={this.state.playName}
-                                     userSecret={this.state.userSecret}>
+                                     userSecret={this.state.userSecret}
+                                     goBack={() => this.setState({createPlaySuccess: false})}>
                         </CreatePhase>
                     </View>
                 }

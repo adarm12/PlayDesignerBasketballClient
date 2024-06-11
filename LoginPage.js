@@ -72,7 +72,7 @@ class LoginPage extends React.Component {
         else if (this.state.sendRequest)
             this.setState({sendRequest: !this.state.sendRequest})
         else if (this.state.createPlay)
-            this.setState({addPlay: !this.state.createPlay})
+            this.setState({createPlay: !this.state.createPlay})
     }
 
     render() {

@@ -12,6 +12,7 @@ class ShowRequesters extends React.Component {
         acceptFriend: false,
         secretFrom: null,
         responseList: null,
+        message: "",
     }
 
     componentDidMount() {
@@ -26,11 +27,16 @@ class ShowRequesters extends React.Component {
         console.log("secret:" + this.props.secretFromLogin);
         this.setState({apiDomain: this.props.domain})
         sendApiPostRequest(this.props.domain + '/get-friend-requests', {
-            secretFrom: this.props.secretFromLogin,
-        }, (response) => {
-            console.log('Response:', response.data.users);
-            this.setState({responseList: response.data.users});
-        })
+                secretFrom: this.props.secretFromLogin,
+            }, (response) => {
+                console.log('Response:', response.data.users);
+                if (response.data.success)
+                    this.setState({responseList: response.data.users});
+                else
+                    this.setState({message: "There are no friend requests"});
+
+            }
+        )
     }
 
     render() {
@@ -62,7 +68,9 @@ class ShowRequesters extends React.Component {
                                 ))}
                             </View>
                             :
-                            <Text style={generalStyle.heading}> There are no friend requests </Text>
+                            <View style={generalStyle.container}>
+                                <Text style={generalStyle.heading}> {this.state.message} </Text>
+                            </View>
                         }
                         <StatusBar style="auto"/>
                     </View>

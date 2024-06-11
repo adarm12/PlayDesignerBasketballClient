@@ -45,6 +45,8 @@ class SearchUser extends React.Component {
             } else {
                 if (response.data.errorCode === 14)
                     this.setState({message: "No search"});
+                if (response.data.errorCode === 19)
+                    this.setState({message: "No search results"});
             }
         })
     }
@@ -101,7 +103,7 @@ class SearchUser extends React.Component {
                                         ))}
                                     </View>
                                     :
-                                    <Text style={generalStyle.heading}> No results</Text>
+                                    <Text style={generalStyle.heading}> {this.state.message}</Text>
                                 }
                             </View>
                         }
