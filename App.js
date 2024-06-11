@@ -7,7 +7,7 @@ import generalStyle from "./GeneralStyle";
 class App extends React.Component {
 
     state = {
-        apiDomain: "http://192.168.1.16:8989",
+        apiDomain: "",
         signUp: false,
         login: false,
         showButtons: false,
