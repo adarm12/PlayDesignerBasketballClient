@@ -6,6 +6,8 @@ import {sendApiPostRequest} from "./ApiRequests";
 import axios from "axios";
 import CutArrow from "./CutArrow";
 import generalStyle from "./GeneralStyle";
+import {DIMENSIONS} from "./Constants";
+import {drawArrowsBetweenTwoPhases} from "./DrawArrows";
 
 const {width: screenWidth, height: screenHeight} = Dimensions.get('window');
 
@@ -261,13 +263,18 @@ class CreatePhase extends Component {
 
 
     render() {
+        const arrows = !this.state.setInitialPosition ? drawArrowsBetweenTwoPhases(this.state.oldPhases[this.state.oldPhases.length - 1], this.state.currentPhase) : [];
+
+
         return (
-            <View style={[styles.container,{marginTop: 60}]}>
-                <TouchableOpacity onPress={this.props.goBack}
-                                  style={[generalStyle.button]}>
-                    <Text style={generalStyle.buttonText}>Go Back</Text>
-                </TouchableOpacity>
-                <View style={styles.container} height={screenHeight} width={screenWidth}>
+            <View style={[styles.container]}>
+                {/*<TouchableOpacity onPress={this.props.goBack}*/}
+                {/*                  style={[generalStyle.button]}>*/}
+                {/*    <Text style={generalStyle.buttonText}>Go Back</Text>*/}
+                {/*</TouchableOpacity>*/}
+                <View style={styles.container} height={DIMENSIONS.HEIGHT} width={DIMENSIONS.WIDTH}>
+
+
                     {/*circles*/}
                     {this.state.currentPhase.map((item, index) => (
                         <GestureHandlerRootView key={index} style={styles.gestureHandler}>
@@ -308,6 +315,11 @@ class CreatePhase extends Component {
                         </GestureHandlerRootView>
                     ))}
                     {/*end of circles stuff*/}
+
+
+                    {/*arrows*/}
+                    {/*//TODO*/}
+                    {arrows}
 
 
                     <TouchableOpacity
@@ -395,13 +407,13 @@ class CreatePhase extends Component {
                     )}
 
 
-                    <TouchableOpacity
-                        style={styles.sendPhaseButton}
-                        onPress={this.showArrow}
-                    >
-                        <Text style={{color: 'white'}}>Arrow</Text>
-                    </TouchableOpacity>
-                    {this.state.arrow && <CutArrow/>}
+                    {/*<TouchableOpacity*/}
+                    {/*    style={styles.sendPhaseButton}*/}
+                    {/*    onPress={this.showArrow}*/}
+                    {/*>*/}
+                    {/*    <Text style={{color: 'white'}}>Arrow</Text>*/}
+                    {/*</TouchableOpacity>*/}
+                    {/*{this.state.arrow && <CutArrow/>}*/}
                 </View>
             </View>
         );
@@ -438,7 +450,7 @@ const styles = StyleSheet.create({
         position: 'absolute',
         bottom: 0,
         left: '67%',
-        width: screenWidth / 3,
+        width: DIMENSIONS.WIDTH / 3,
         backgroundColor: 'rgba(241, 241, 241, 0.5)',
         padding: 10,
     },
