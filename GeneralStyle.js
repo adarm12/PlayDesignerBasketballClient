@@ -123,7 +123,7 @@ const generalStyle = StyleSheet.create({
     },
     instructionContainer: {
         position: 'absolute',
-        top: 35,
+        top: 50,
         left: 0,
         right: 0,
         backgroundColor: 'rgba(0, 0, 0, 0.5)',

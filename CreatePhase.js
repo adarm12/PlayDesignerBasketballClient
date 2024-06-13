@@ -58,19 +58,7 @@ class CreatePhase extends Component {
             },
             onPanResponderRelease: (event, gestureState) => {
 
-                this.setState(
-                    prevState => {
-                        const newArrows = !prevState.setInitialPosition
-                            ? drawArrowsBetweenTwoPhases(
-                                prevState.oldPhases[prevState.oldPhases.length - 1],
-                                prevState.currentPhase
-                            )
-                            : [];
-                        console.log(newArrows)
-                        return { arrows: newArrows };
-                    },
-
-                );
+                this.drawArrows()
             }
         })
     );
@@ -133,8 +121,26 @@ class CreatePhase extends Component {
             });
             const releasedPhases = releaseCirclesWithAction(newPhases);
             this.setState({ currentPhase: releasedPhases });
+
+            this.drawArrows()
         }
     };
+
+    drawArrows = () => {
+        this.setState(
+            prevState => {
+                const newArrows = !prevState.setInitialPosition
+                    ? drawArrowsBetweenTwoPhases(
+                        prevState.oldPhases[prevState.oldPhases.length - 1],
+                        prevState.currentPhase
+                    )
+                    : [];
+                console.log(newArrows)
+                return { arrows: newArrows };
+            },
+
+        );
+    }
 
     initialPositionCircleClick = (index) => {
         this.setState({
