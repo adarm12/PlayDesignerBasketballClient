@@ -1,15 +1,14 @@
 import React, {Component} from 'react';
-import {View, TouchableOpacity, Text, StyleSheet, Dimensions, PanResponder} from 'react-native';
+import {View, TouchableOpacity, Text, Dimensions, PanResponder} from 'react-native';
 import Svg, {Circle, Text as SvgText} from 'react-native-svg';
 import {GestureHandlerRootView} from "react-native-gesture-handler";
-import {sendApiPostRequest} from "./ApiRequests";
 import axios from "axios";
-import CutArrow from "./CutArrow";
-import generalStyle from "./GeneralStyle";
 import {DIMENSIONS} from "./Constants";
 import {drawArrowsBetweenTwoPhases} from "./DrawArrows";
+import GeneralStyle from "./GeneralStyle";
 
-const {width: screenWidth, height: screenHeight} = Dimensions.get('window');
+import { freezeCircles, releaseCircles, releaseCirclesWithAction, deleteOtherBalls, prepareNewPhase } from './PhaseFunctions';
+
 
 class CreatePhase extends Component {
     circleRadius = 25; // Radius of the circle
@@ -20,8 +19,8 @@ class CreatePhase extends Component {
         waitingForPass: false,
         ballBeenPassed: false,
         ballBeenShot: false,
-        arrow: false,
         errorCode: "",
+        arrows: [],
 
         oldPhases: [],
         currentPhase: [
@@ -40,12 +39,6 @@ class CreatePhase extends Component {
         console.log("Initial positions:", this.state.currentPhase);
     }
 
-    showArrow = () => {
-        this.setState({
-            arrow: !this.state.arrow
-        })
-    }
-
     panResponders = this.state.currentPhase.map((circle, index) =>
         PanResponder.create({
             onStartShouldSetPanResponder: () => this.state.currentPhase[index].draggable,
@@ -58,8 +51,27 @@ class CreatePhase extends Component {
                         y: gestureState.moveY,
                     };
                     this.setState({currentPhase: newPhase});
+                    this.setState({
+                        arrows:[]
+                    })
                 }
             },
+            onPanResponderRelease: (event, gestureState) => {
+
+                this.setState(
+                    prevState => {
+                        const newArrows = !prevState.setInitialPosition
+                            ? drawArrowsBetweenTwoPhases(
+                                prevState.oldPhases[prevState.oldPhases.length - 1],
+                                prevState.currentPhase
+                            )
+                            : [];
+                        console.log(newArrows)
+                        return { arrows: newArrows };
+                    },
+
+                );
+            }
         })
     );
 
@@ -94,52 +106,15 @@ class CreatePhase extends Component {
         }));
 
         if (!this.state.ballBeenShot) {
-            this.prepareNewPhase();
+            const newPhaseData = prepareNewPhase(this.state.currentPhase);
+            this.setState(newPhaseData);
         } else {
             // GoBack
-            console.log(this.state.oldPhases)
+            console.log(this.state.oldPhases);
         }
-
     };
 
-    prepareNewPhase = () => {
-        this.setState(prevState => {
-            const newPhases = prevState.currentPhase.map(phase => ({
-                ...phase,
-                draggable: false,
-                action: 0,
-            }));
-            return {
-                currentPhase: newPhases,
-                setInitialPosition: false,
-                ballBeenPassed: false,
-                waitingForPass: false,
-                selectedCircle: null,
-                menuVisible: false,
-                setBallMenuVisible: false
-            };
-        });
-        console.log(this.state.currentPhase);
-    }
-
-    //I decided that the first initial phase will be sent to the server, therefore there is no need for this method.
-    //I decided that the action is what the circle did to get to (x,y) and not what it will do to get to the next
-    // setInitialPosition = () => {
-    //     this.setState(prevState => {
-    //         const newPhases = prevState.currentPhase.map(phase => ({
-    //             ...phase,
-    //             draggable: false
-    //         }));
-    //         return {
-    //             currentPhase: newPhases,
-    //             setInitialPosition: false
-    //         };
-    //     });
-    //     console.log(this.state.currentPhase);
-    // };
-
     handleCircleClick = (index) => {
-
         if (!this.state.currentPhase[index].draggable && !this.state.setInitialPosition && !this.state.waitingForPass) {
             this.setState({
                 selectedCircle: index,
@@ -148,14 +123,16 @@ class CreatePhase extends Component {
         } else if (this.state.setInitialPosition) {
             this.initialPositionCircleClick(index)
         } else if (this.state.waitingForPass) {
-            this.deleteOtherBalls()
-            this.setState(prevState => {
-                const newPhase = [...prevState.currentPhase];
-                newPhase[index].ball = true;
-                return {currentPhase: newPhase, setBallMenuVisible: false, waitingForPass: false, ballBeenPassed: true};
+            const newPhases = deleteOtherBalls(this.state.currentPhase);
+            newPhases[index].ball = true;
+            this.setState({
+                currentPhase: newPhases,
+                setBallMenuVisible: false,
+                waitingForPass: false,
+                ballBeenPassed: true
             });
-            this.releaseCirclesWithAction()
-
+            const releasedPhases = releaseCirclesWithAction(newPhases);
+            this.setState({ currentPhase: releasedPhases });
         }
     };
 
@@ -167,7 +144,6 @@ class CreatePhase extends Component {
     }
 
     handleMenuClick = (action) => {
-
         if (!this.state.currentPhase[this.state.selectedCircle].draggable && !this.state.setInitialPosition) {
             this.setState(prevState => {
                 const newPhase = [...prevState.currentPhase];
@@ -181,108 +157,42 @@ class CreatePhase extends Component {
                 const newPhase = [...prevState.currentPhase];
                 newPhase[prevState.selectedCircle].draggable = false;
                 return {currentPhase: newPhase, ballBeenShot: true};
-            })
+            });
         }
     };
 
     handlePass = () => {
-        this.freezeCircles()
+        const frozenPhases = freezeCircles(this.state.currentPhase);
+        this.setState({ currentPhase: frozenPhases });
         if (!this.state.ballBeenPassed) {
             this.setState({
                 waitingForPass: true,
                 menuVisible: false
-            })
+            });
         }
-
     }
 
-
     handleBallMenuClick = () => {
-        this.releaseCircles()
+        const releasedPhases = releaseCircles(this.state.currentPhase);
+        this.setState({ currentPhase: releasedPhases });
         this.setState(prevState => {
             const newPhase = [...prevState.currentPhase];
             newPhase[prevState.selectedCircle].ball = true;
-            return {currentPhase: newPhase, setBallMenuVisible: false,};
+            return {currentPhase: newPhase, setBallMenuVisible: false};
         });
     }
-
-    releaseCircles = () => {
-        this.setState(prevState => {
-            const newPhases = prevState.currentPhase.map(phase => ({
-                ...phase,
-                draggable: true,
-            }));
-            return {
-                currentPhase: newPhases,
-            };
-        });
-    }
-
-    releaseCirclesWithAction = () => {
-        this.setState(prevState => {
-            const newPhases = prevState.currentPhase.map(phase => {
-                if (phase.action !== 0) {
-                    return {
-                        ...phase,
-                        draggable: true,
-                    };
-                }
-                return phase;
-            });
-            return {
-                currentPhase: newPhases,
-            };
-        });
-    }
-
-
-    freezeCircles = () => {
-        this.setState(prevState => {
-            const newPhases = prevState.currentPhase.map(phase => ({
-                ...phase,
-                draggable: false,
-            }));
-            return {
-                currentPhase: newPhases,
-            };
-        });
-
-    }
-
-    deleteOtherBalls = () => {
-        this.setState(prevState => {
-            const newPhases = prevState.currentPhase.map(phase => ({
-                ...phase,
-                ball: false,
-            }));
-            return {
-                currentPhase: newPhases,
-            };
-        });
-    }
-
 
     render() {
-        const arrows = !this.state.setInitialPosition ? drawArrowsBetweenTwoPhases(this.state.oldPhases[this.state.oldPhases.length - 1], this.state.currentPhase) : [];
-
-
         return (
-            <View style={[styles.container]}>
-                {/*<TouchableOpacity onPress={this.props.goBack}*/}
-                {/*                  style={[generalStyle.button]}>*/}
-                {/*    <Text style={generalStyle.buttonText}>Go Back</Text>*/}
-                {/*</TouchableOpacity>*/}
-                <View style={styles.container} height={DIMENSIONS.HEIGHT} width={DIMENSIONS.WIDTH}>
-
-
-                    {/*circles*/}
+            <View style={[GeneralStyle.phaseContainer]}>
+                <View style={GeneralStyle.phaseContainer} height={DIMENSIONS.HEIGHT} width={DIMENSIONS.WIDTH}>
                     {this.state.currentPhase.map((item, index) => (
-                        <GestureHandlerRootView key={index} style={styles.gestureHandler}>
+                        <GestureHandlerRootView key={index} style={GeneralStyle.gestureHandler}>
                             <TouchableOpacity onPress={() => this.handleCircleClick(index)}>
                                 <View
                                     {...this.panResponders[index].panHandlers}
                                     style={[
-                                        styles.circle,
+                                        GeneralStyle.circle,
                                         {
                                             left: item.x - this.circleRadius,
                                             top: item.y - this.circleRadius,
@@ -309,188 +219,85 @@ class CreatePhase extends Component {
                                             {index + 1}
                                         </SvgText>
                                     </Svg>
-
                                 </View>
                             </TouchableOpacity>
                         </GestureHandlerRootView>
                     ))}
-                    {/*end of circles stuff*/}
 
-
-                    {/*arrows*/}
-                    {/*//TODO*/}
-                    {arrows}
-
+                    {this.state.arrows.map(arrow => arrow)}
 
                     <TouchableOpacity
-                        style={styles.sendPhaseButton}
+                        style={GeneralStyle.sendPhaseButton}
                         onPress={this.createPhase}
                         disabled={this.state.setInitialPosition}
                     >
                         <Text style={{color: 'white'}}>{!this.state.ballBeenShot ? "Send Phase" : "Done"}</Text>
                     </TouchableOpacity>
-
                     {this.state.setInitialPosition && (<TouchableOpacity
-                        style={styles.setInitialPositionButton}
+                        style={GeneralStyle.setInitialPositionButton}
                         onPress={this.createPhase}
                         disabled={!this.state.setInitialPosition}
                     >
                         <Text style={{color: 'white'}}>Set initial position</Text>
                     </TouchableOpacity>)}
-
-                    {/*menu stuff*/}
                     {(this.state.menuVisible && !this.state.ballBeenShot) && (
-                        <View style={styles.menuContainer}>
+                        <View style={GeneralStyle.menuContainer}>
                             {!this.state.currentPhase[this.state.selectedCircle].ball &&
-
-                                (<View style={styles.menu}>
-                                        <TouchableOpacity style={styles.menuItem}
+                                (<View style={GeneralStyle.menu}>
+                                        <TouchableOpacity style={GeneralStyle.menuItem}
                                                           onPress={() => this.handleMenuClick(1)}>
-                                            <Text style={styles.menuText}>Cut</Text>
+                                            <Text style={GeneralStyle.menuText}>Cut</Text>
                                         </TouchableOpacity>
-                                        <TouchableOpacity style={styles.menuItem}
+                                        <TouchableOpacity style={GeneralStyle.menuItem}
                                                           onPress={() => this.handleMenuClick(3)}>
-                                            <Text style={styles.menuText}>Screen</Text>
+                                            <Text style={GeneralStyle.menuText}>Screen</Text>
                                         </TouchableOpacity>
                                     </View>
                                 )}
                             {this.state.currentPhase[this.state.selectedCircle].ball &&
-                                (<View style={styles.menu}>
+                                (<View style={GeneralStyle.menu}>
                                         {!this.state.ballBeenPassed &&
-                                            (<TouchableOpacity style={styles.menuItem}
+                                            (<TouchableOpacity style={GeneralStyle.menuItem}
                                                                onPress={() => this.handlePass()}>
-                                                <Text style={styles.menuText}>Pass</Text>
+                                                <Text style={GeneralStyle.menuText}>Pass</Text>
                                             </TouchableOpacity>)}
-                                        <TouchableOpacity style={styles.menuItem}
+                                        <TouchableOpacity style={GeneralStyle.menuItem}
                                                           onPress={() => this.handleMenuClick(2)}>
-                                            <Text style={styles.menuText}>Dribble</Text>
+                                            <Text style={GeneralStyle.menuText}>Dribble</Text>
                                         </TouchableOpacity>
-                                        <TouchableOpacity style={styles.menuItem}
+                                        <TouchableOpacity style={GeneralStyle.menuItem}
                                                           onPress={() => this.handleMenuClick(5)}>
-                                            <Text style={styles.menuText}>Shoot</Text>
+                                            <Text style={GeneralStyle.menuText}>Shoot</Text>
                                         </TouchableOpacity>
                                     </View>
-
                                 )}
                         </View>
                     )}
-
                     {this.state.setBallMenuVisible && (
-                        <View style={styles.menuContainer}>
-                            <View style={styles.menu}>
-                                <TouchableOpacity style={styles.menuItem} onPress={() => this.handleBallMenuClick()}>
-                                    <Text style={styles.menuText}>Add Ball</Text>
+                        <View style={GeneralStyle.menuContainer}>
+                            <View style={GeneralStyle.menu}>
+                                <TouchableOpacity style={GeneralStyle.menuItem} onPress={() => this.handleBallMenuClick()}>
+                                    <Text style={GeneralStyle.menuText}>Add Ball</Text>
                                 </TouchableOpacity>
                             </View>
                         </View>
                     )}
-                    {/*{/end of menu stuff/}*/}
-
-                    {/*{/debug stuff!/}*/}
-                    {/*      <Text style={styles.debugText}>Phase: {this.state.currentPhase.map((item, index) => (*/}
-                    {/*     <Text key={index}>{item.x},{item.y} </Text>*/}
-                    {/*</Text>*/}
-
-
-                    {/*user instructions*/}
                     {this.state.setInitialPosition && (
-                        <View style={styles.instructionContainer}>
-                            <Text style={styles.instructionText}>Add Ball to one of your players and move them to their
+                        <View style={GeneralStyle.instructionContainer}>
+                            <Text style={GeneralStyle.instructionText}>Add Ball to one of your players and move them to their
                                 starting position.</Text>
                         </View>
                     )}
 
                     {this.state.waitingForPass && (
-                        <View style={styles.instructionContainer}>
-                            <Text style={styles.instructionText}>Click a player to pass.</Text>
+                        <View style={GeneralStyle.instructionContainer}>
+                            <Text style={GeneralStyle.instructionText}>Click a player to pass.</Text>
                         </View>
                     )}
-
-
-                    {/*<TouchableOpacity*/}
-                    {/*    style={styles.sendPhaseButton}*/}
-                    {/*    onPress={this.showArrow}*/}
-                    {/*>*/}
-                    {/*    <Text style={{color: 'white'}}>Arrow</Text>*/}
-                    {/*</TouchableOpacity>*/}
-                    {/*{this.state.arrow && <CutArrow/>}*/}
                 </View>
             </View>
         );
     }
 }
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: '#4B9CD3', // Changed background color to make circles more visible
-    },
-    gestureHandler: {
-        position: 'absolute',
-    },
-    sendPhaseButton: {
-        position: 'absolute',
-        bottom: 50,
-        left: '50%',
-        marginLeft: -50,
-        backgroundColor: 'blue',
-        padding: 10,
-        borderRadius: 5
-    },
-    setInitialPositionButton: {
-        position: 'absolute',
-        bottom: 50,
-        left: '0%',
-        marginLeft: 0,
-        backgroundColor: 'blue',
-        padding: 10,
-        borderRadius: 5
-    },
-    menuContainer: {
-        position: 'absolute',
-        bottom: 0,
-        left: '67%',
-        width: DIMENSIONS.WIDTH / 3,
-        backgroundColor: 'rgba(241, 241, 241, 0.5)',
-        padding: 10,
-    },
-    menu: {
-        backgroundColor: 'white',
-        borderRadius: 5,
-    },
-    menuItem: {
-        padding: 10,
-        backgroundColor: 'white',
-        borderRadius: 5,
-        flex: 1,
-        alignItems: 'center',
-        marginVertical: 5
-    },
-    menuText: {
-        fontSize: 16,
-        fontWeight: 'bold'
-    },
-    debugText: {
-        position: 'absolute',
-        top: 50,
-        left: '50%',
-        marginLeft: -75,
-        fontSize: 16,
-        color: 'red'
-    },
-    instructionContainer: {
-        position: 'absolute',
-        top: 35,
-        left: 0,
-        right: 0,
-        backgroundColor: 'rgba(0, 0, 0, 0.5)',
-        padding: 10,
-    },
-    instructionText: {
-        fontSize: 16,
-        color: 'white',
-        textAlign: 'center'
-    }
-});
 
 export default CreatePhase;
