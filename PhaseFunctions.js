@@ -38,6 +38,8 @@ export const prepareNewPhase = (currentPhase) => {
         ...phase,
         draggable: false,
         action: 0,
+        cx:-1,
+        cy:-1
     }));
     return {
         currentPhase: newPhases,

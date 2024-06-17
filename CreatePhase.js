@@ -1,14 +1,13 @@
-import React, {Component} from 'react';
-import {View, TouchableOpacity, Text, Dimensions, PanResponder} from 'react-native';
-import Svg, {Circle, Text as SvgText} from 'react-native-svg';
-import {GestureHandlerRootView} from "react-native-gesture-handler";
+
+import React, { Component } from 'react';
+import { View, TouchableOpacity, Text, PanResponder } from 'react-native';
+import Svg, { Circle, Text as SvgText } from 'react-native-svg';
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 import axios from "axios";
-import {DIMENSIONS} from "./Constants";
-import {drawArrowsBetweenTwoPhases} from "./DrawArrows";
+import { DIMENSIONS } from "./Constants";
+import { drawArrowsBetweenTwoPhases } from "./DrawArrows";
 import GeneralStyle from "./GeneralStyle";
-
 import { freezeCircles, releaseCircles, releaseCirclesWithAction, deleteOtherBalls, prepareNewPhase } from './PhaseFunctions';
-
 
 class CreatePhase extends Component {
     circleRadius = 25; // Radius of the circle
@@ -21,14 +20,13 @@ class CreatePhase extends Component {
         ballBeenShot: false,
         errorCode: "",
         arrows: [],
-
         oldPhases: [],
         currentPhase: [
-            {x: 30, y: 200, action: 0, draggable: false, ball: false},
-            {x: 30, y: 260, action: 0, draggable: false, ball: false},
-            {x: 30, y: 320, action: 0, draggable: false, ball: false},
-            {x: 30, y: 380, action: 0, draggable: false, ball: false},
-            {x: 30, y: 440, action: 0, draggable: false, ball: false}
+            { x: 30, y: 200, cx: '', cy: '', action: 0, draggable: false, ball: false },
+            { x: 30, y: 260, cx: '', cy: '', action: 0, draggable: false, ball: false },
+            { x: 30, y: 320, cx: '', cy: '', action: 0, draggable: false, ball: false },
+            { x: 30, y: 380, cx: '', cy: '', action: 0, draggable: false, ball: false },
+            { x: 30, y: 440, cx: '', cy: '', action: 0, draggable: false, ball: false }
         ],
         selectedCircle: null,
         menuVisible: false,
@@ -39,28 +37,52 @@ class CreatePhase extends Component {
         console.log("Initial positions:", this.state.currentPhase);
     }
 
-    panResponders = this.state.currentPhase.map((circle, index) =>
-        PanResponder.create({
+    createPanResponder = (index, isMainCircle) => {
+        return PanResponder.create({
             onStartShouldSetPanResponder: () => this.state.currentPhase[index].draggable,
             onPanResponderMove: (event, gestureState) => {
                 if (this.state.currentPhase[index].draggable) {
                     const newPhase = [...this.state.currentPhase];
-                    newPhase[index] = {
-                        ...newPhase[index],
-                        x: gestureState.moveX,
-                        y: gestureState.moveY,
-                    };
-                    this.setState({currentPhase: newPhase});
-                    this.setState({
-                        arrows:[]
-                    })
+                    if (isMainCircle) {
+                        if (this.state.setInitialPosition) {
+                            newPhase[index] = {
+                                ...newPhase[index],
+                                x: gestureState.moveX,
+                                y: gestureState.moveY,
+                            };
+                        } else if (this.state.oldPhases.length > 0) {
+                            const lastPhase = this.state.oldPhases[this.state.oldPhases.length - 1][index];
+                            newPhase[index] = {
+                                ...newPhase[index],
+                                x: gestureState.moveX,
+                                y: gestureState.moveY,
+                                cx: (gestureState.moveX + lastPhase.x) / 2,
+                                cy: (gestureState.moveY + lastPhase.y) / 2
+                            };
+
+                        }
+                    } else {
+                        newPhase[index] = {
+                            ...newPhase[index],
+                            cx: gestureState.moveX,
+                            cy: gestureState.moveY,
+                        };
+                    }
+                    this.setState({ currentPhase: newPhase, });
                 }
             },
-            onPanResponderRelease: (event, gestureState) => {
-
-                this.drawArrows()
+            onPanResponderRelease: () => {
+                this.drawArrows();
             }
-        })
+        });
+    };
+
+    panResponders = this.state.currentPhase.map((circle, index) =>
+        this.createPanResponder(index, true)
+    );
+
+    cxCyPanResponders = this.state.currentPhase.map((circle, index) =>
+        this.createPanResponder(index, false)
     );
 
     createPhase = () => {
@@ -83,7 +105,7 @@ class CreatePhase extends Component {
                 if (response.data.success) {
                     console.log('OK');
                 }
-                this.setState({errorCode: response.data.errorCode});
+                this.setState({ errorCode: response.data.errorCode });
             })
             .catch(error => {
                 console.error('Error sending phase data:', error);
@@ -155,14 +177,14 @@ class CreatePhase extends Component {
                 const newPhase = [...prevState.currentPhase];
                 newPhase[prevState.selectedCircle].action = action;
                 newPhase[prevState.selectedCircle].draggable = true;
-                return {currentPhase: newPhase, menuVisible: false};
+                return { currentPhase: newPhase, menuVisible: false };
             });
         }
         if (action === 5) {
             this.setState(prevState => {
                 const newPhase = [...prevState.currentPhase];
                 newPhase[prevState.selectedCircle].draggable = false;
-                return {currentPhase: newPhase, ballBeenShot: true};
+                return { currentPhase: newPhase, ballBeenShot: true };
             });
         }
     };
@@ -184,7 +206,7 @@ class CreatePhase extends Component {
         this.setState(prevState => {
             const newPhase = [...prevState.currentPhase];
             newPhase[prevState.selectedCircle].ball = true;
-            return {currentPhase: newPhase, setBallMenuVisible: false};
+            return { currentPhase: newPhase, setBallMenuVisible: false };
         });
     }
 
@@ -227,6 +249,28 @@ class CreatePhase extends Component {
                                     </Svg>
                                 </View>
                             </TouchableOpacity>
+
+                            {item.cx !== '' && item.cy !== '' && (
+                                <View
+                                    {...this.cxCyPanResponders[index].panHandlers}
+                                    style={{
+                                        position: 'absolute',
+                                        left: item.cx - 10,
+                                        top: item.cy - 10,
+                                        width: 20,
+                                        height: 20,
+                                    }}
+                                >
+                                    <Svg height={30} width={30}>
+                                        <Circle
+                                            cx="15"
+                                            cy="15"
+                                            r="15"
+                                            fill="blue"
+                                        />
+                                    </Svg>
+                                </View>
+                            )}
                         </GestureHandlerRootView>
                     ))}
 
@@ -237,14 +281,14 @@ class CreatePhase extends Component {
                         onPress={this.createPhase}
                         disabled={this.state.setInitialPosition}
                     >
-                        <Text style={{color: 'white'}}>{!this.state.ballBeenShot ? "Send Phase" : "Done"}</Text>
+                        <Text style={{ color: 'white' }}>{!this.state.ballBeenShot ? "Send Phase" : "Done"}</Text>
                     </TouchableOpacity>
                     {this.state.setInitialPosition && (<TouchableOpacity
                         style={GeneralStyle.setInitialPositionButton}
                         onPress={this.createPhase}
                         disabled={!this.state.setInitialPosition}
                     >
-                        <Text style={{color: 'white'}}>Set initial position</Text>
+                        <Text style={{ color: 'white' }}>Set initial position</Text>
                     </TouchableOpacity>)}
                     {(this.state.menuVisible && !this.state.ballBeenShot) && (
                         <View style={GeneralStyle.menuContainer}>

@@ -1,15 +1,22 @@
 import React from 'react';
 import BaseArrow from './BaseArrow';
 import GeneralStyle from "./GeneralStyle";
-import {Dimensions, View} from "react-native";
-import Svg, {Line} from "react-native-svg";
-
+import { Dimensions, View } from "react-native";
+import Svg, { Line } from "react-native-svg";
 
 class ScreenArrow extends BaseArrow {
 
     renderArrowHead() {
-        const { x0, y0, x1, y1 } = this.state;
-        const angle = Math.atan2(y1 - y0, x1 - x0);
+        const { x0, y0, x1, y1, cx, cy } = this.state;
+        const midX = (x0+x1)/2;
+        const midY = (y0+y1)/2;
+
+        const doubleX = 2*cx-midX;
+        const doubleY = 2*cy-midY;
+
+        const controlX = cx !== undefined ? doubleX : x0;
+        const controlY = cy !== undefined ? doubleY : y0;
+        const angle = Math.atan2(y1 - controlY, x1 - controlX);
         const arrowHeadLength = 15;
 
         // Calculate the coordinates of the vertical part of the "T" arrowhead

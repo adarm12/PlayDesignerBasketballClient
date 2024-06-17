@@ -1,9 +1,9 @@
+
 import CutArrow from "./CutArrow";
 import DribbleArrow from "./DribbleArrow";
 import ScreenArrow from "./ScreenArrow";
 import PassArrow from "./PassArrow";
-import {ACTIONS} from "./Constants";
-
+import { ACTIONS } from "./Constants";
 
 export const drawArrowsBetweenTwoPhases = (oldPhase, currentPhase) => {
     let arrows = currentPhase.map((element, index) => {
@@ -17,6 +17,8 @@ export const drawArrowsBetweenTwoPhases = (oldPhase, currentPhase) => {
                             y0={oldPhase[index].y}
                             x1={element.x}
                             y1={element.y}
+                            cx={element.cx}
+                            cy={element.cy}
                         />
                     );
                 case ACTIONS.DRIBBLE:
@@ -27,6 +29,8 @@ export const drawArrowsBetweenTwoPhases = (oldPhase, currentPhase) => {
                             y0={oldPhase[index].y}
                             x1={element.x}
                             y1={element.y}
+                            cx={element.cx}
+                            cy={element.cy}
                         />
                     );
                 case ACTIONS.SCREEN:
@@ -37,6 +41,8 @@ export const drawArrowsBetweenTwoPhases = (oldPhase, currentPhase) => {
                             y0={oldPhase[index].y}
                             x1={element.x}
                             y1={element.y}
+                            cx={element.cx}
+                            cy={element.cy}
                         />
                     );
                 default:
@@ -47,12 +53,11 @@ export const drawArrowsBetweenTwoPhases = (oldPhase, currentPhase) => {
         }
     }).filter(arrow => arrow !== null); // Filter out null values
 
-
     const passArrows = currentPhase.map((element, index) => {
         if (element.ball === true && oldPhase[index].ball === false) {
             const oldCircleWithBall = oldPhase.find(circle => circle.ball === true);
             if (oldCircleWithBall) {
-                if (element.action===0 || element.action === ACTIONS.DRIBBLE) {
+                if (element.action === 0 || element.action === ACTIONS.DRIBBLE) {
                     return (
                         <PassArrow
                             key={`pass-${index}`}
@@ -62,8 +67,7 @@ export const drawArrowsBetweenTwoPhases = (oldPhase, currentPhase) => {
                             y1={oldPhase[index].y}
                         />
                     );
-                }
-                else {
+                } else {
                     return (
                         <PassArrow
                             key={`pass-${index}`}

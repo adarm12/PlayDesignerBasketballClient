@@ -7,6 +7,7 @@ const generalStyle = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         backgroundColor: "#067b8f"
+
     },
     arrowContainer: {
         position: 'absolute',
