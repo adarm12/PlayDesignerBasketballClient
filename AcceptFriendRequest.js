@@ -31,24 +31,27 @@ class AcceptFriendRequest extends React.Component {
         return (
             <View style={generalStyle.container}>
                 {!this.state.acceptSuccess ?
-                    <View style={generalStyle.container}>
-                        <TouchableOpacity onPress={this.props.goBack} style={generalStyle.button}>
-                            <Text style={generalStyle.buttonText}>Go Back</Text>
+                    <View>
+                        <TouchableOpacity onPress={this.props.goBack} style={generalStyle.goBackButton}>
+                            <Text style={[generalStyle.buttonText, {fontSize: 20}]}>{"<"}</Text>
                         </TouchableOpacity>
-                        <Text style={generalStyle.heading}>Accept Request</Text>
-                        <Text style={generalStyle.text}>User :{this.props.stateFromShowRequests.usernameToAccept}</Text>
-                        <TouchableOpacity onPress={this.acceptRequest} style={generalStyle.button}>
-                            <Text style={generalStyle.buttonText}>
-                                Accept
-                            </Text>
-                        </TouchableOpacity>
-                        <StatusBar style="auto"/>
+                        <View style={generalStyle.container}>
+                            <Text style={generalStyle.heading}>Accept Request</Text>
+                            <Text style={generalStyle.text}>User
+                                :{this.props.stateFromShowRequests.usernameToAccept}</Text>
+                            <TouchableOpacity onPress={this.acceptRequest} style={generalStyle.button}>
+                                <Text style={generalStyle.buttonText}>
+                                    Accept
+                                </Text>
+                            </TouchableOpacity>
+                        </View>
                     </View>
                     :
                     <View>
                         <Text>{this.state.message}</Text>
                     </View>
                 }
+                <StatusBar style="auto"/>
             </View>
         );
     }

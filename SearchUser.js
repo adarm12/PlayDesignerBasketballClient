@@ -13,7 +13,7 @@ class SearchUser extends React.Component {
         searchSuccess: false,
         usernameTo: "",
         chooseFriend: false,
-        responseList: null,
+        responseList: [],
         message: "",
     }
 
@@ -57,54 +57,57 @@ class SearchUser extends React.Component {
                 {!this.state.chooseFriend ?
                     <View style={generalStyle.container}>
                         {!this.state.searchSuccess ?
-                            <View style={generalStyle.container}>
-                                <TouchableOpacity onPress={this.props.goBack}
-                                                  style={[generalStyle.button]}>
-                                    <Text style={generalStyle.buttonText}>Go Back</Text>
+                            <View>
+                                <TouchableOpacity onPress={this.props.goBack} style={generalStyle.goBackButton}>
+                                    <Text style={[generalStyle.buttonText, {fontSize: 20}]}>{"<"}</Text>
                                 </TouchableOpacity>
-                                <Text style={generalStyle.heading}>Search User</Text>
-                                <TextInput value={this.state.partOfUsername}
-                                           placeholder="Enter username to search"
-                                           onChangeText={(text) => this.onValueChange("partOfUsername", text)}
-                                           style={generalStyle.input}></TextInput>
-                                <TouchableOpacity onPress={this.search} style={generalStyle.button}>
-                                    <Text style={generalStyle.buttonText}>
-                                        Search
+                                <View style={generalStyle.container}>
+                                    <Text style={generalStyle.heading}>Search User</Text>
+                                    <TextInput value={this.state.partOfUsername}
+                                               placeholder="Enter username to search"
+                                               onChangeText={(text) => this.onValueChange("partOfUsername", text)}
+                                               style={generalStyle.input}></TextInput>
+                                    <TouchableOpacity onPress={this.search} style={generalStyle.button}>
+                                        <Text style={generalStyle.buttonText}>
+                                            Search
+                                        </Text>
+                                    </TouchableOpacity>
+                                    <Text>
+                                        {this.state.message}
                                     </Text>
-                                </TouchableOpacity>
-                                <Text>
-                                    {this.state.message}
-                                </Text>
+                                </View>
                             </View>
                             :
-                            <View style={generalStyle.container}>
+                            <View>
                                 <TouchableOpacity
                                     onPress={() => this.setState({searchSuccess: !this.state.searchSuccess})}
-                                    style={[generalStyle.button]}>
-                                    < Text style={generalStyle.buttonText}>Go Back</Text>
+                                    style={generalStyle.goBackButton}>
+                                    <Text style={[generalStyle.buttonText, {fontSize: 20}]}>{"<"}</Text>
                                 </TouchableOpacity>
-                                {this.state.responseList != null ?
-                                    <View style={generalStyle.container}>
-                                        <Text style={generalStyle.heading}>Results</Text>
-                                        {this.state.responseList.map((users) => (
-                                            <View key={users.id}>
-                                                <TouchableOpacity onPress={() => {
-                                                    this.setState({
-                                                        usernameTo: users.username,
-                                                        chooseFriend: true,
-                                                        secretFrom: this.props.secretFromLogin,
-                                                    })
-                                                }} style={[generalStyle.button, {width: 150}]}>
-                                                    <Text style={generalStyle.buttonText}>
-                                                        {users.username}
-                                                    </Text>
-                                                </TouchableOpacity>
-                                            </View>
-                                        ))}
-                                    </View>
-                                    :
-                                    <Text style={generalStyle.heading}> {this.state.message}</Text>
-                                }
+                                <View style={generalStyle.container}>
+                                    {this.state.responseList != null ?
+                                        <View style={generalStyle.container}>
+                                            <Text style={generalStyle.heading}>Results</Text>
+                                            {this.state.responseList.map((users) => (
+                                                <View key={users.id}>
+                                                    <TouchableOpacity onPress={() => {
+                                                        this.setState({
+                                                            usernameTo: users.username,
+                                                            chooseFriend: true,
+                                                            secretFrom: this.props.secretFromLogin,
+                                                        })
+                                                    }} style={[generalStyle.button, {width: 150}]}>
+                                                        <Text style={generalStyle.buttonText}>
+                                                            {users.username}
+                                                        </Text>
+                                                    </TouchableOpacity>
+                                                </View>
+                                            ))}
+                                        </View>
+                                        :
+                                        <Text style={generalStyle.heading}> {this.state.message}</Text>
+                                    }
+                                </View>
                             </View>
                         }
                     </View>

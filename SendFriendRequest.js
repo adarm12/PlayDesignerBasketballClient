@@ -47,17 +47,21 @@ class SendFriendRequest extends React.Component {
     render() {
         return (
             <View style={generalStyle.container}>
-                <TouchableOpacity onPress={this.props.goBack} style={generalStyle.button}>
-                    <Text style={generalStyle.buttonText}>Go Back</Text>
-                </TouchableOpacity>
-                <Text style={generalStyle.heading}>Friend Request</Text>
-                <Text style={generalStyle.text}>User: {this.props.stateFromSearch.usernameTo}</Text>
-                <TouchableOpacity onPress={this.sendRequest} style={generalStyle.button}>
-                    <Text style={generalStyle.buttonText}>
-                        Request
-                    </Text>
-                </TouchableOpacity>
-                <Text style={generalStyle.text}> {this.errorCodeMessage()}</Text>
+                <View>
+                    <TouchableOpacity onPress={this.props.goBack} style={generalStyle.goBackButton}>
+                        <Text style={[generalStyle.buttonText, {fontSize: 20}]}>{"<"}</Text>
+                    </TouchableOpacity>
+                    <View style={generalStyle.container}>
+                        <Text style={generalStyle.heading}>Friend Request</Text>
+                        <Text style={generalStyle.text}>User: {this.props.stateFromSearch.usernameTo}</Text>
+                        <TouchableOpacity onPress={this.sendRequest} style={generalStyle.button}>
+                            <Text style={generalStyle.buttonText}>
+                                Request
+                            </Text>
+                        </TouchableOpacity>
+                        <Text style={generalStyle.text}> {this.errorCodeMessage()}</Text>
+                    </View>
+                </View>
                 <StatusBar style="auto"/>
             </View>
         );

@@ -3,23 +3,17 @@ import {View, Text, TouchableOpacity} from 'react-native';
 import LoginPage from "./LoginPage";
 import SignUp from "./SignUp";
 import generalStyle from "./GeneralStyle";
-import Arrows from "./Arrows";
-import Tests from "./Tests";
-import CutArrow from "./CutArrow";
-import DribbleArrow from "./DribbleArrow";
-import ScreenArrow from "./ScreenArrow";
-import PassArrow from "./PassArrow";
 import CreatePhase from "./CreatePhase";
-
+import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 
 class App extends React.Component {
 
     state = {
-        apiDomain: "http://10.0.0.8:8989",
+        apiDomain: "",
         signUp: false,
         login: false,
         showButtons: false,
-        test: true,
+        test: false,
     }
 
     goBack = () => {
@@ -42,7 +36,9 @@ class App extends React.Component {
                     <View style={generalStyle.container}>
                         {!this.state.showButtons ?
                             <View style={generalStyle.container}>
-                                <Text style={generalStyle.heading}>Play Designer Basketball</Text>
+                                <Text style={generalStyle.heading}>Play Designer Basketball
+                                    <Icon name={"basketball"} size={25} color={'orange'}/>
+                                </Text>
                                 <TouchableOpacity style={generalStyle.button}
                                                   onPress={() => this.setState({signUp: true, showButtons: true})}>
                                     <Text style={generalStyle.buttonText}>Sign Up</Text>
@@ -77,4 +73,5 @@ class App extends React.Component {
         );
     }
 }
+
 export default App;

@@ -2,31 +2,27 @@ import React from 'react';
 import {View, Text, TouchableOpacity,} from 'react-native';
 import {sendApiPostRequest} from "./ApiRequests";
 import {StatusBar} from "expo-status-bar/build/StatusBar";
-import AcceptFriendRequest from "./AcceptFriendRequest";
 import generalStyle from "./GeneralStyle";
 
-class ShowRequesters extends React.Component {
+class ShowFriends extends React.Component {
     state = {
         apiDomain: "",
-        usernameToAccept: "",
-        acceptFriend: false,
         secretFrom: null,
-        responseList:  [],
+        responseList: [],
+        playsList: [],
+        playName: "",
+        chooseFriend: false,
         message: "",
     }
 
     componentDidMount() {
-        this.ShowRequest();
+        this.ShowFriends();
     }
 
-    goBack = () => {
-        this.setState({acceptFriend: !this.state.acceptFriend})
-    }
-
-    ShowRequest = () => {
+    ShowFriends = () => {
         console.log("secret:" + this.props.secretFromLogin);
         this.setState({apiDomain: this.props.domain})
-        sendApiPostRequest(this.props.domain + '/get-friend-requests', {
+        sendApiPostRequest(this.props.domain + '/get-friends', {
                 secretFrom: this.props.secretFromLogin,
             }, (response) => {
                 console.log('Response:', response.data.users);
@@ -34,7 +30,6 @@ class ShowRequesters extends React.Component {
                     this.setState({responseList: response.data.users});
                 else
                     this.setState({message: "There are no friend requests"});
-
             }
         )
     }
@@ -42,7 +37,7 @@ class ShowRequesters extends React.Component {
     render() {
         return (
             <View style={generalStyle.container}>
-                {!this.state.acceptFriend ?
+                {!this.state.chooseFriend ?
                     <View>
                         <TouchableOpacity onPress={this.props.goBack} style={generalStyle.goBackButton}>
                             <Text style={[generalStyle.buttonText, {fontSize: 20}]}>{"<"}</Text>
@@ -50,14 +45,15 @@ class ShowRequesters extends React.Component {
                         <View style={generalStyle.container}>
                             {this.state.responseList != null ?
                                 <View style={generalStyle.container}>
-                                    <Text style={generalStyle.heading}>Show Requesters</Text>
+                                    <Text style={generalStyle.heading}>Show Friends</Text>
                                     {this.state.responseList.map((users, index) => (
                                         <Text key={index}>
                                             <TouchableOpacity onPress={() => {
                                                 this.setState({
                                                     usernameToAccept: users.username,
                                                     secretFrom: this.props.secretFromLogin,
-                                                    acceptFriend: true,
+                                                    chooseFriend: true,
+                                                    playsList: users.plays
                                                 })
                                             }} style={[generalStyle.button, {width: 150}]}>
                                                 <Text style={generalStyle.buttonText}>
@@ -76,16 +72,28 @@ class ShowRequesters extends React.Component {
                     </View>
                     :
                     <View>
-                        <AcceptFriendRequest stateFromShowRequests={this.state}
-                                             goBack={this.goBack}>
-                        </AcceptFriendRequest>
+                        <TouchableOpacity onPress={() => this.setState({chooseFriend: false})}
+                                          style={generalStyle.goBackButton}>
+                            <Text style={[generalStyle.buttonText, {fontSize: 20}]}>{"<"}</Text>
+                        </TouchableOpacity>
+                        <View style={generalStyle.container}>
+                            <Text style={generalStyle.heading}>Show plays</Text>
+                            {this.state.responseList.map((plays, index) => (
+                                <Text key={index}>
+                                    <TouchableOpacity style={[generalStyle.button, {width: 150}]}>
+                                        <Text style={generalStyle.buttonText}>
+                                            {plays.name}
+                                        </Text>
+                                    </TouchableOpacity>
+                                </Text>
+                            ))}
+                        </View>
                     </View>
                 }
                 <StatusBar style="auto"/>
             </View>
         );
     }
-
 }
 
-export default ShowRequesters;
+export default ShowFriends;

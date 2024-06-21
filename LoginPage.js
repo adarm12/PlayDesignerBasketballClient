@@ -5,18 +5,20 @@ import SearchUser from "./SearchUser";
 import ShowRequesters from "./ShowRequesters";
 import generalStyle from "./GeneralStyle";
 import CreatePlay from "./CreatePlay";
+import ShowFriends from "./ShowFriends";
 
 class LoginPage extends React.Component {
     state = {
         apiDomain: "",
         username: null,
         password: null,
-        loginSuccess: false,
+        loginSuccess: true,
         userSecret: "",
         errorCode: "",
         sendRequest: false,
         acceptRequest: false,
         createPlay: false,
+        showFriends: false,
     }
 
     componentDidMount() {
@@ -73,57 +75,65 @@ class LoginPage extends React.Component {
             this.setState({sendRequest: !this.state.sendRequest})
         else if (this.state.createPlay)
             this.setState({createPlay: !this.state.createPlay})
+        else if (this.state.showFriends)
+            this.setState({showFriends: !this.state.showFriends})
     }
 
     render() {
         return (
-            <View style={generalStyle.container}>
+            <View>
                 {!this.state.loginSuccess ?
-                    <View style={generalStyle.container}>
-                        <TouchableOpacity onPress={this.props.goBack} style={generalStyle.button}>
-                            <Text style={generalStyle.buttonText}>Go Back</Text>
+                    <View>
+                        <TouchableOpacity onPress={this.props.goBack} style={generalStyle.goBackButton}>
+                            <Text style={[generalStyle.buttonText, {fontSize: 20}]}>{"<"}</Text>
                         </TouchableOpacity>
-                        <Text style={generalStyle.heading}>Login</Text>
-                        <TextInput
-                            style={generalStyle.input}
-                            placeholder="username"
-                            secureTextEntry={true}
-                            value={this.state.username}
-                            onChangeText={(text) => this.onValueChange("username", text)}
-                        />
-                        <TextInput
-                            style={generalStyle.input}
-                            placeholder="Password"
-                            secureTextEntry={true}
-                            value={this.state.password}
-                            onChangeText={(text) => this.onValueChange("password", text)}
-                        />
-                        <TouchableOpacity onPress={this.login} style={generalStyle.button}>
-                            <Text style={generalStyle.buttonText}>Submit</Text>
-                        </TouchableOpacity>
-                        <Text>{this.errorCodeMessage()}</Text>
+                        <View style={generalStyle.container}>
+                            <Text style={generalStyle.heading}>Login</Text>
+                            <TextInput
+                                style={generalStyle.input}
+                                placeholder="username"
+                                secureTextEntry={true}
+                                value={this.state.username}
+                                onChangeText={(text) => this.onValueChange("username", text)}
+                            />
+                            <TextInput
+                                style={generalStyle.input}
+                                placeholder="Password"
+                                secureTextEntry={true}
+                                value={this.state.password}
+                                onChangeText={(text) => this.onValueChange("password", text)}
+                            />
+                            <TouchableOpacity onPress={this.login} style={generalStyle.button}>
+                                <Text style={generalStyle.buttonText}>Submit</Text>
+                            </TouchableOpacity>
+                            <Text>{this.errorCodeMessage()}</Text>
+                        </View>
                     </View>
                     :
                     <View style={generalStyle.container}>
-                        {!this.state.acceptRequest && !this.state.sendRequest && !this.state.createPlay ?
-                            <View style={generalStyle.container}>
-                                <TouchableOpacity onPress={() => this.setState({
-                                    loginSuccess: !this.state.loginSuccess
-                                })} style={generalStyle.button}>
-                                    <Text style={generalStyle.buttonText}>Go Back</Text>
+                        {!this.state.acceptRequest && !this.state.sendRequest && !this.state.createPlay && !this.state.showFriends ?
+                            <View>
+                                <TouchableOpacity onPress={this.props.goBack} style={generalStyle.goBackButton}>
+                                    <Text style={[generalStyle.buttonText, {fontSize: 20}]}>{"<"}</Text>
                                 </TouchableOpacity>
-                                <TouchableOpacity onPress={() => this.setState({sendRequest: true})}
-                                                  style={[generalStyle.button, {width: 200}]}>
-                                    <Text style={generalStyle.buttonText}>Send Friend Request</Text>
-                                </TouchableOpacity>
-                                <TouchableOpacity onPress={() => this.setState({acceptRequest: true})}
-                                                  style={[generalStyle.button, {width: 200}]}>
-                                    <Text style={generalStyle.buttonText}>Accept Friend Request</Text>
-                                </TouchableOpacity>
-                                <TouchableOpacity onPress={() => this.setState({createPlay: true})}
-                                                  style={[generalStyle.button, {width: 200}]}>
-                                    <Text style={generalStyle.buttonText}>Create New Play</Text>
-                                </TouchableOpacity>
+                                <View style={generalStyle.container}>
+                                    <TouchableOpacity onPress={() => this.setState({sendRequest: true})}
+                                                      style={[generalStyle.button, {width: 200}]}>
+                                        <Text style={generalStyle.buttonText}>Send Friend Request</Text>
+                                    </TouchableOpacity>
+                                    <TouchableOpacity onPress={() => this.setState({acceptRequest: true})}
+                                                      style={[generalStyle.button, {width: 200}]}>
+                                        <Text style={generalStyle.buttonText}>Accept Friend Request</Text>
+                                    </TouchableOpacity>
+                                    <TouchableOpacity onPress={() => this.setState({createPlay: true})}
+                                                      style={[generalStyle.button, {width: 200}]}>
+                                        <Text style={generalStyle.buttonText}>Create New Play</Text>
+                                    </TouchableOpacity>
+                                    <TouchableOpacity onPress={() => this.setState({showFriends: true})}
+                                                      style={[generalStyle.button, {width: 200}]}>
+                                        <Text style={generalStyle.buttonText}>Show Friends</Text>
+                                    </TouchableOpacity>
+                                </View>
                             </View>
                             :
                             <View style={generalStyle.container}>
@@ -151,6 +161,14 @@ class LoginPage extends React.Component {
                                     :
                                     <View></View>
                                 }
+                                {this.state.showFriends ?
+                                    <ShowFriends secretFromLogin={this.state.userSecret}
+                                                 domain={this.state.apiDomain}
+                                                 goBack={this.goBack}>
+                                    </ShowFriends>
+                                    :
+                                    <View></View>
+                                }
                             </View>
                         }
                     </View>
@@ -160,6 +178,5 @@ class LoginPage extends React.Component {
         )
     }
 }
-
 
 export default LoginPage;

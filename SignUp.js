@@ -77,35 +77,37 @@ class SignUp extends React.Component {
 
     render() {
         return (
-            <View style={generalStyle.container}>
-                <TouchableOpacity onPress={this.props.goBack} style={generalStyle.button}>
-                    <Text style={generalStyle.buttonText}>Go Back</Text>
+            <View>
+                <TouchableOpacity onPress={this.props.goBack} style={generalStyle.goBackButton}>
+                    <Text style={[generalStyle.buttonText, {fontSize: 20}]}>{"<"}</Text>
                 </TouchableOpacity>
-                <Text style={generalStyle.heading}>Sign Up</Text>
-                <TextInput
-                    style={generalStyle.input}
-                    placeholder="Username"
-                    value={this.state.username}
-                    onChangeText={(text) => this.onValueChange("username", text)}
-                />
-                <TextInput
-                    style={generalStyle.input}
-                    placeholder="Password"
-                    secureTextEntry={true}
-                    value={this.state.password}
-                    onChangeText={(text) => this.onValueChange("password", text)}
-                />
-                <TextInput
-                    style={[generalStyle.input, {backgroundColor: this.same() ? 'green' : 'red'}]}
-                    placeholder="Repeat Password"
-                    secureTextEntry={true}
-                    value={this.state.repeatPassword}
-                    onChangeText={(text) => this.onValueChange("repeatPassword", text)}
-                />
-                <TouchableOpacity onPress={this.signUp} style={generalStyle.button}>
-                    <Text style={generalStyle.buttonText}>Submit</Text>
-                </TouchableOpacity>
-                <Text>{this.errorCodeMessage()}</Text>
+                <View style={generalStyle.container}>
+                    <Text style={generalStyle.heading}>Sign Up</Text>
+                    <TextInput
+                        style={generalStyle.input}
+                        placeholder="Username"
+                        value={this.state.username}
+                        onChangeText={(text) => this.onValueChange("username", text)}
+                    />
+                    <TextInput
+                        style={generalStyle.input}
+                        placeholder="Password"
+                        secureTextEntry={true}
+                        value={this.state.password}
+                        onChangeText={(text) => this.onValueChange("password", text)}
+                    />
+                    <TextInput
+                        style={[generalStyle.input, {backgroundColor: this.same() ? 'green' : 'red'}]}
+                        placeholder="Repeat Password"
+                        secureTextEntry={true}
+                        value={this.state.repeatPassword}
+                        onChangeText={(text) => this.onValueChange("repeatPassword", text)}
+                    />
+                    <TouchableOpacity onPress={this.signUp} style={generalStyle.button}>
+                        <Text style={generalStyle.buttonText}>Submit</Text>
+                    </TouchableOpacity>
+                    <Text>{this.errorCodeMessage()}</Text>
+                </View>
             </View>
         );
     }
