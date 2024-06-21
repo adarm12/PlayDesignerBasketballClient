@@ -17,7 +17,9 @@ class CreatePhase extends Component {
         setInitialPosition: true,
         waitingForPass: false,
         ballBeenPassed: false,
-        ballBeenShot: false,
+        ballBeenSet: false,
+        done: false,
+
         errorCode: "",
         arrows: [],
         oldPhases: [],
@@ -35,6 +37,7 @@ class CreatePhase extends Component {
 
     componentDidMount() {
         console.log("Initial positions:", this.state.currentPhase);
+        {console.log(!this.state.setInitialPosition && !this.state.ballBeenSet)}
     }
 
     createPanResponder = (index, isMainCircle) => {
@@ -69,10 +72,11 @@ class CreatePhase extends Component {
                         };
                     }
                     this.setState({ currentPhase: newPhase, });
+                    this.drawArrows();
+
                 }
             },
             onPanResponderRelease: () => {
-                this.drawArrows();
             }
         });
     };
@@ -115,7 +119,7 @@ class CreatePhase extends Component {
             oldPhases: [...prevState.oldPhases, prevState.currentPhase],
         }));
 
-        if (!this.state.ballBeenShot) {
+        if (!this.state.done) {
             const newPhaseData = prepareNewPhase(this.state.currentPhase);
             this.setState(newPhaseData);
         } else {
@@ -123,6 +127,12 @@ class CreatePhase extends Component {
             console.log(this.state.oldPhases);
         }
     };
+
+    finishPlay = () => {
+        this.createPhase();
+        //TODO
+        //go back to player profile page
+    }
 
     handleCircleClick = (index) => {
         if (!this.state.currentPhase[index].draggable && !this.state.setInitialPosition && !this.state.waitingForPass) {
@@ -157,7 +167,6 @@ class CreatePhase extends Component {
                         prevState.currentPhase
                     )
                     : [];
-                console.log(newArrows)
                 return { arrows: newArrows };
             },
 
@@ -184,7 +193,7 @@ class CreatePhase extends Component {
             this.setState(prevState => {
                 const newPhase = [...prevState.currentPhase];
                 newPhase[prevState.selectedCircle].draggable = false;
-                return { currentPhase: newPhase, ballBeenShot: true };
+                return { currentPhase: newPhase, done: true };
             });
         }
     };
@@ -206,7 +215,7 @@ class CreatePhase extends Component {
         this.setState(prevState => {
             const newPhase = [...prevState.currentPhase];
             newPhase[prevState.selectedCircle].ball = true;
-            return { currentPhase: newPhase, setBallMenuVisible: false };
+            return { currentPhase: newPhase, setBallMenuVisible: false, ballBeenSet:true };
         });
     }
 
@@ -276,21 +285,39 @@ class CreatePhase extends Component {
 
                     {this.state.arrows.map(arrow => arrow)}
 
-                    <TouchableOpacity
+                    {(!this.state.setInitialPosition && !this.state.done) &&
+                        <TouchableOpacity
                         style={GeneralStyle.sendPhaseButton}
                         onPress={this.createPhase}
                         disabled={this.state.setInitialPosition}
                     >
-                        <Text style={{ color: 'white' }}>{!this.state.ballBeenShot ? "Send Phase" : "Done"}</Text>
-                    </TouchableOpacity>
-                    {this.state.setInitialPosition && (<TouchableOpacity
+                        <Text style={{ color: 'white' }}>Send Phase</Text>
+                        </TouchableOpacity>
+                    }
+
+
+
+                    {this.state.setInitialPosition && (
+                        <TouchableOpacity
                         style={GeneralStyle.setInitialPositionButton}
                         onPress={this.createPhase}
-                        disabled={!this.state.setInitialPosition}
+                        disabled={(!this.state.setInitialPosition || !this.state.ballBeenSet)}
                     >
                         <Text style={{ color: 'white' }}>Set initial position</Text>
-                    </TouchableOpacity>)}
-                    {(this.state.menuVisible && !this.state.ballBeenShot) && (
+                        </TouchableOpacity>)
+                    }
+
+                    {!this.state.setInitialPosition &&
+                        <TouchableOpacity
+                            style={GeneralStyle.setInitialPositionButton}
+                            onPress={this.finishPlay}
+                        >
+                            <Text style={{ color: 'white' }}>Done</Text>
+                        </TouchableOpacity>
+                    }
+
+
+                    {(this.state.menuVisible && !this.state.done) && (
                         <View style={GeneralStyle.menuContainer}>
                             {!this.state.currentPhase[this.state.selectedCircle].ball &&
                                 (<View style={GeneralStyle.menu}>
