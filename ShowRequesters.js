@@ -11,7 +11,8 @@ class ShowRequesters extends React.Component {
         usernameToAccept: "",
         acceptFriend: false,
         secretFrom: null,
-        responseList:  [],
+        responseList: [],
+        success: false,
         message: "",
     }
 
@@ -29,12 +30,13 @@ class ShowRequesters extends React.Component {
         sendApiPostRequest(this.props.domain + '/get-friend-requests', {
                 secretFrom: this.props.secretFromLogin,
             }, (response) => {
-                console.log('Response:', response.data.users);
-                if (response.data.success)
+                console.log('Response:', response.data);
+                if (response.data.success) {
                     this.setState({responseList: response.data.users});
-                else
+                    this.setState({success: true});
+                } else {
                     this.setState({message: "There are no friend requests"});
-
+                }
             }
         )
     }
@@ -48,7 +50,7 @@ class ShowRequesters extends React.Component {
                             <Text style={[generalStyle.buttonText, {fontSize: 20}]}>{"<"}</Text>
                         </TouchableOpacity>
                         <View style={generalStyle.container}>
-                            {this.state.responseList != null ?
+                            {this.state.success?
                                 <View style={generalStyle.container}>
                                     <Text style={generalStyle.heading}>Show Requesters</Text>
                                     {this.state.responseList.map((users, index) => (
@@ -69,7 +71,7 @@ class ShowRequesters extends React.Component {
                                 </View>
                                 :
                                 <View style={generalStyle.container}>
-                                    <Text style={generalStyle.heading}> {this.state.message} </Text>
+                                    <Text> {this.state.message} </Text>
                                 </View>
                             }
                         </View>

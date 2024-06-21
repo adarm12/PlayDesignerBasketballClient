@@ -10,6 +10,7 @@ class ShowFriends extends React.Component {
         secretFrom: null,
         responseList: [],
         playsList: [],
+        success: false,
         playName: "",
         chooseFriend: false,
         message: "",
@@ -26,10 +27,12 @@ class ShowFriends extends React.Component {
                 secretFrom: this.props.secretFromLogin,
             }, (response) => {
                 console.log('Response:', response.data.users);
-                if (response.data.success)
+                if (response.data.success) {
                     this.setState({responseList: response.data.users});
-                else
+                    this.setState({success: true});
+                } else {
                     this.setState({message: "There are no friend requests"});
+                }
             }
         )
     }
@@ -43,7 +46,7 @@ class ShowFriends extends React.Component {
                             <Text style={[generalStyle.buttonText, {fontSize: 20}]}>{"<"}</Text>
                         </TouchableOpacity>
                         <View style={generalStyle.container}>
-                            {this.state.responseList != null ?
+                            {this.state.success ?
                                 <View style={generalStyle.container}>
                                     <Text style={generalStyle.heading}>Show Friends</Text>
                                     {this.state.responseList.map((users, index) => (
@@ -65,7 +68,7 @@ class ShowFriends extends React.Component {
                                 </View>
                                 :
                                 <View style={generalStyle.container}>
-                                    <Text style={generalStyle.heading}> {this.state.message} </Text>
+                                    <Text> {this.state.message} </Text>
                                 </View>
                             }
                         </View>
