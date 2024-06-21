@@ -78,7 +78,7 @@ class ShowFriends extends React.Component {
                         </TouchableOpacity>
                         <View style={generalStyle.container}>
                             <Text style={generalStyle.heading}>Show plays</Text>
-                            {this.state.responseList.map((plays, index) => (
+                            {this.state.playsList.map((plays, index) => (
                                 <Text key={index}>
                                     <TouchableOpacity style={[generalStyle.button, {width: 150}]}>
                                         <Text style={generalStyle.buttonText}>
