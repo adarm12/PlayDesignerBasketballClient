@@ -95,12 +95,14 @@ class CreatePhase extends Component {
             hasBall: phase.ball,
             x: phase.x,
             y: phase.y,
+            cx: phase.cx,
+            cy: phase.cy,
             action: phase.action
         }));
 
-        axios.post(this.props.domain + '/add-phase', {
-            secret: this.props.userSecret,
-            playName: this.props.playName,
+        axios.post("http://10.0.0.8:8989" + '/add-phase', {
+            secret: "630d73f0-16b7-4ecf-b44f-4192dfb96d1e",
+            playName: "three",
             orderNum: 1,
             playerPhases
         })
@@ -219,69 +221,75 @@ class CreatePhase extends Component {
         });
     }
 
+    renderCircles = () => {
+        const circles = this.state.setInitialPosition ? this.state.currentPhase : this.state.oldPhases[this.state.oldPhases.length - 1];
+        return circles.map((item, index) => (
+            <GestureHandlerRootView key={index} style={GeneralStyle.gestureHandler}>
+                <TouchableOpacity onPress={() => this.handleCircleClick(index)}>
+                    <View
+                        {...this.panResponders[index].panHandlers}
+                        style={[
+                            GeneralStyle.circle,
+                            {
+                                left: item.x - this.circleRadius,
+                                top: item.y - this.circleRadius,
+                            },
+                        ]}
+                    >
+                        <Svg height={60} width={60}>
+                            <Circle
+                                cx="30"
+                                cy="30"
+                                r={25}
+                                stroke="black"
+                                strokeWidth="2.5"
+                                fill={this.state.currentPhase[index].ball ? "rgba(255, 165, 0, 0.5)" : "rgba(0, 0, 0, 0.05)"}
+                            />
+                            <SvgText
+                                x="30"
+                                y="35"
+                                fontSize="25"
+                                fill="black"
+                                textAnchor="middle"
+                                fontWeight="bold"
+                            >
+                                {index + 1}
+                            </SvgText>
+                        </Svg>
+                    </View>
+                </TouchableOpacity>
+
+                {this.state.currentPhase[index].cx !== '' && this.state.currentPhase[index].cy !== '' && (
+                    <View
+                        {...this.cxCyPanResponders[index].panHandlers}
+                        style={{
+                            position: 'absolute',
+                            left: this.state.currentPhase[index].cx - 10,
+                            top: this.state.currentPhase[index].cy - 10,
+                            width: 20,
+                            height: 20,
+                        }}
+                    >
+                        <Svg height={30} width={30}>
+                            <Circle
+                                cx="15"
+                                cy="15"
+                                r="15"
+                                fill="blue"
+                            />
+                        </Svg>
+                    </View>
+                )}
+            </GestureHandlerRootView>
+        ));
+    }
+
+
     render() {
         return (
             <View style={[GeneralStyle.phaseContainer]}>
                 <View style={GeneralStyle.phaseContainer} height={DIMENSIONS.HEIGHT} width={DIMENSIONS.WIDTH}>
-                    {this.state.currentPhase.map((item, index) => (
-                        <GestureHandlerRootView key={index} style={GeneralStyle.gestureHandler}>
-                            <TouchableOpacity onPress={() => this.handleCircleClick(index)}>
-                                <View
-                                    {...this.panResponders[index].panHandlers}
-                                    style={[
-                                        GeneralStyle.circle,
-                                        {
-                                            left: item.x - this.circleRadius,
-                                            top: item.y - this.circleRadius,
-                                        },
-                                    ]}
-                                >
-                                    <Svg height={60} width={60}>
-                                        <Circle
-                                            cx="30"
-                                            cy="30"
-                                            r={25}
-                                            stroke="black"
-                                            strokeWidth="2.5"
-                                            fill={this.state.currentPhase[index].ball ? "rgba(255, 165, 0, 0.5)" : "rgba(0, 0, 0, 0.05)"}
-                                        />
-                                        <SvgText
-                                            x="30"
-                                            y="35"
-                                            fontSize="25"
-                                            fill="black"
-                                            textAnchor="middle"
-                                            fontWeight="bold"
-                                        >
-                                            {index + 1}
-                                        </SvgText>
-                                    </Svg>
-                                </View>
-                            </TouchableOpacity>
-
-                            {item.cx !== '' && item.cy !== '' && (
-                                <View
-                                    {...this.cxCyPanResponders[index].panHandlers}
-                                    style={{
-                                        position: 'absolute',
-                                        left: item.cx - 10,
-                                        top: item.cy - 10,
-                                        width: 20,
-                                        height: 20,
-                                    }}
-                                >
-                                    <Svg height={30} width={30}>
-                                        <Circle
-                                            cx="15"
-                                            cy="15"
-                                            r="15"
-                                            fill="blue"
-                                        />
-                                    </Svg>
-                                </View>
-                            )}
-                        </GestureHandlerRootView>
-                    ))}
+                    {this.renderCircles()}
 
                     {this.state.arrows.map(arrow => arrow)}
 

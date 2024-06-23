@@ -54,7 +54,7 @@ class BaseArrow extends Component {
 
     renderArrowLine() {
         const { x0, y0, x1, y1, cx, cy } = this.state;
-        if (cx !== undefined && cy !== undefined) {
+        if (cx !== undefined && cy !== undefined &&cx!==-1 &&cy!==-1) {
             const midX = (x0+x1)/2;
             const midY = (y0+y1)/2;
 
