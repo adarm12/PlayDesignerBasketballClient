@@ -25,7 +25,7 @@ class DribbleArrow extends BaseArrow {
         const doubleX = 2*cx-midX;
         const doubleY = 2*cy-midY;
 
-        const pathData = cx !== undefined && cy !== undefined
+        const pathData = cx !== undefined && cy !== undefined &&cx!==-1 &&cy!==-1
             ? `M${x0},${y0} Q${doubleY},${doubleX} ${x1},${y1}`
             : `M${x0},${y0} L${x1},${y1}`;
 

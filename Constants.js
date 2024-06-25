@@ -15,6 +15,8 @@ export const DIMENSIONS = {
 
 };
 
+export const CIRCLE_RADIUS=25;
+
 export const ACTIONS = {
     CUT: 1,
     DRIBBLE: 2,

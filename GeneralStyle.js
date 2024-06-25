@@ -134,8 +134,36 @@ const generalStyle = StyleSheet.create({
         fontSize: 16,
         color: 'white',
         textAlign: 'center'
-    }
+    },
+    circle: {
+        position: 'absolute',
+    },
 
+    playArea: {
+        height: DIMENSIONS.HEIGHT,
+        width: DIMENSIONS.WIDTH,
+    },
+    nextButton: {
+        position: 'absolute',
+        bottom: 20,
+        right: 20,
+        backgroundColor: 'blue',
+        padding: 10,
+        borderRadius: 5,
+    },
+    backButton: {
+        position: 'absolute',
+        bottom: 20,
+        left: 20,
+        backgroundColor: 'blue',
+        padding: 10,
+        borderRadius: 5,
+    },
+    whiteButtonText: {
+        color: 'white',
+        fontWeight: 'bold',
+        textAlign: 'center',
+    },
 });
 
 export default generalStyle;

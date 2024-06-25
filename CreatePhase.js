@@ -4,13 +4,12 @@ import { View, TouchableOpacity, Text, PanResponder } from 'react-native';
 import Svg, { Circle, Text as SvgText } from 'react-native-svg';
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import axios from "axios";
-import { DIMENSIONS } from "./Constants";
+import {CIRCLE_RADIUS, DIMENSIONS} from "./Constants";
 import { drawArrowsBetweenTwoPhases } from "./DrawArrows";
 import GeneralStyle from "./GeneralStyle";
 import { freezeCircles, releaseCircles, releaseCirclesWithAction, deleteOtherBalls, prepareNewPhase } from './PhaseFunctions';
 
 class CreatePhase extends Component {
-    circleRadius = 25; // Radius of the circle
 
     state = {
         phaseNumber: 1,
@@ -222,7 +221,7 @@ class CreatePhase extends Component {
     }
 
     renderCircles = () => {
-        const circles = this.state.setInitialPosition ? this.state.currentPhase : this.state.oldPhases[this.state.oldPhases.length - 1];
+        const circles = this.state.currentPhase;
         return circles.map((item, index) => (
             <GestureHandlerRootView key={index} style={GeneralStyle.gestureHandler}>
                 <TouchableOpacity onPress={() => this.handleCircleClick(index)}>
@@ -231,8 +230,8 @@ class CreatePhase extends Component {
                         style={[
                             GeneralStyle.circle,
                             {
-                                left: item.x - this.circleRadius,
-                                top: item.y - this.circleRadius,
+                                left: item.x - CIRCLE_RADIUS,
+                                top: item.y - CIRCLE_RADIUS,
                             },
                         ]}
                     >
@@ -240,10 +239,10 @@ class CreatePhase extends Component {
                             <Circle
                                 cx="30"
                                 cy="30"
-                                r={25}
+                                r={CIRCLE_RADIUS}
                                 stroke="black"
                                 strokeWidth="2.5"
-                                fill={this.state.currentPhase[index].ball ? "rgba(255, 165, 0, 0.5)" : "rgba(0, 0, 0, 0.05)"}
+                                fill={circles[index].ball ? "rgba(255, 165, 0, 0.5)" : "rgba(0, 0, 0, 0.05)"}
                             />
                             <SvgText
                                 x="30"
@@ -264,8 +263,8 @@ class CreatePhase extends Component {
                         {...this.cxCyPanResponders[index].panHandlers}
                         style={{
                             position: 'absolute',
-                            left: this.state.currentPhase[index].cx - 10,
-                            top: this.state.currentPhase[index].cy - 10,
+                            left: circles[index].cx - 10,
+                            top: circles[index].cy - 10,
                             width: 20,
                             height: 20,
                         }}
@@ -289,6 +288,7 @@ class CreatePhase extends Component {
         return (
             <View style={[GeneralStyle.phaseContainer]}>
                 <View style={GeneralStyle.phaseContainer} height={DIMENSIONS.HEIGHT} width={DIMENSIONS.WIDTH}>
+
                     {this.renderCircles()}
 
                     {this.state.arrows.map(arrow => arrow)}

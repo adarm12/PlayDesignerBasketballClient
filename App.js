@@ -5,6 +5,7 @@ import SignUp from "./SignUp";
 import generalStyle from "./GeneralStyle";
 import CreatePhase from "./CreatePhase";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
+import ShowPlay from "./ShowPlay";
 
 class App extends React.Component {
 
@@ -13,7 +14,7 @@ class App extends React.Component {
         signUp: false,
         login: false,
         showButtons: false,
-        test: true,
+        test: false,
     }
 
     goBack = () => {
@@ -29,8 +30,8 @@ class App extends React.Component {
             <View style={generalStyle.container}>
                 {this.state.test ?
                     <View>
-                        {/*<CutArrow x0={30} y0={440} cx={250} cy={556} x1={343} y1={312}/>*/}
-                        <CreatePhase/>
+
+                        <ShowPlay/>
                     </View>
                     :
                     <View style={generalStyle.container}>
