@@ -139,8 +139,7 @@ class CreatePhase extends Component {
 
     finishPlay = () => {
         this.createPhase();
-        //TODO
-        //go back to player profile page
+        this.props.goBack();
     }
 
     handleCircleClick = (index) => {
@@ -385,18 +384,6 @@ class CreatePhase extends Component {
                             <Text style={GeneralStyle.instructionText}>Click a player to pass.</Text>
                         </View>
                     )}
-                    <View style={generalStyle.container}>
-                        {this.state.done ?
-                            <View style={generalStyle.container}>
-                                <TouchableOpacity onPress={this.props.goBack} style={generalStyle.goBackButton}>
-                                    <Text style={[generalStyle.buttonText, {fontSize: 20}]}>{"<"}</Text>
-                                </TouchableOpacity>
-                            </View>
-                            :
-                            <View>
-                            </View>
-                        }
-                    </View>
                 </View>
             </View>
         );

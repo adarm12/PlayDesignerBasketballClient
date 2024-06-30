@@ -14,7 +14,7 @@ class App extends React.Component {
         signUp: false,
         login: false,
         showButtons: false,
-        test: false,
+        test: true,
     }
 
     goBack = () => {
@@ -30,7 +30,7 @@ class App extends React.Component {
             <View style={generalStyle.container}>
                 {this.state.test ?
                     <View>
-                        <ShowPlay/>
+                        <CreatePhase/>
                     </View>
                     :
                     <View style={generalStyle.container}>
