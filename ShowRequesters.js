@@ -45,7 +45,7 @@ class ShowRequesters extends React.Component {
         return (
             <View style={generalStyle.container}>
                 {!this.state.acceptFriend ?
-                    <View>
+                    <View style={generalStyle.container}>
                         <TouchableOpacity onPress={this.props.goBack} style={generalStyle.goBackButton}>
                             <Text style={[generalStyle.buttonText, {fontSize: 20}]}>{"<"}</Text>
                         </TouchableOpacity>
@@ -77,7 +77,7 @@ class ShowRequesters extends React.Component {
                         </View>
                     </View>
                     :
-                    <View>
+                    <View style={generalStyle.container}>
                         <AcceptFriendRequest stateFromShowRequests={this.state}
                                              goBack={this.goBack}>
                         </AcceptFriendRequest>

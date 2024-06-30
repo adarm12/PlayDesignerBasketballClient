@@ -7,7 +7,6 @@ import generalStyle from "./GeneralStyle";
 class AcceptFriendRequest extends React.Component {
     state = {
         response: "",
-        acceptSuccess: false,
         message: "",
     }
 
@@ -21,7 +20,6 @@ class AcceptFriendRequest extends React.Component {
             console.log('Response:', response.data);
             this.setState({response: response.data});
             if (response.data.success) {
-                this.setState({acceptSuccess: true});
                 this.setState({message: "Successfully accepted"});
             }
         })
@@ -30,27 +28,18 @@ class AcceptFriendRequest extends React.Component {
     render() {
         return (
             <View style={generalStyle.container}>
-                {!this.state.acceptSuccess ?
-                    <View>
-                        <TouchableOpacity onPress={this.props.goBack} style={generalStyle.goBackButton}>
-                            <Text style={[generalStyle.buttonText, {fontSize: 20}]}>{"<"}</Text>
-                        </TouchableOpacity>
-                        <View style={generalStyle.container}>
-                            <Text style={generalStyle.heading}>Accept Request</Text>
-                            <Text style={generalStyle.text}>User
-                                :{this.props.stateFromShowRequests.usernameToAccept}</Text>
-                            <TouchableOpacity onPress={this.acceptRequest} style={generalStyle.button}>
-                                <Text style={generalStyle.buttonText}>
-                                    Accept
-                                </Text>
-                            </TouchableOpacity>
-                        </View>
-                    </View>
-                    :
-                    <View>
-                        <Text>{this.state.message}</Text>
-                    </View>
-                }
+                <TouchableOpacity onPress={this.props.goBack} style={generalStyle.goBackButton}>
+                    <Text style={[generalStyle.buttonText, {fontSize: 20}]}>{"<"}</Text>
+                </TouchableOpacity>
+                <Text style={generalStyle.heading}>Accept Request</Text>
+                <Text style={generalStyle.heading}>User
+                    :{this.props.stateFromShowRequests.usernameToAccept}</Text>
+                <TouchableOpacity onPress={this.acceptRequest} style={generalStyle.button}>
+                    <Text style={generalStyle.buttonText}>
+                        Accept
+                    </Text>
+                </TouchableOpacity>
+                <Text>{this.state.message}</Text>
                 <StatusBar style="auto"/>
             </View>
         );

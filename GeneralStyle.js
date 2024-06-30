@@ -4,11 +4,13 @@ import {DIMENSIONS} from "./Constants";
 const generalStyle = StyleSheet.create({
     container: {
         flex: 1,
+        width: '100%',
         alignItems: 'center',
         justifyContent: 'center',
         backgroundColor: "#067b8f"
 
     },
+
     arrowContainer: {
         position: 'absolute',
         flex: 1,
@@ -38,14 +40,15 @@ const generalStyle = StyleSheet.create({
         width: 100,
     },
     goBackButton: {
+        position: 'absolute',
+        top: 50,
+        left: 20,
         backgroundColor: "#ffffff",
-        borderRadius: 5,
         padding: 10,
-        alignItems: 'left',
-        marginLeft: -80,
-        marginTop: 50,
-        width: 40,
+        borderRadius: 5,
         height: 40,
+        width: 40,
+        zIndex: 1,
     },
     buttonText: {
         color: 'black',
@@ -143,6 +146,7 @@ const generalStyle = StyleSheet.create({
         height: DIMENSIONS.HEIGHT,
         width: DIMENSIONS.WIDTH,
     },
+
     nextButton: {
         position: 'absolute',
         bottom: 20,

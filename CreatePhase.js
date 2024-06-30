@@ -1,13 +1,19 @@
-
-import React, { Component } from 'react';
-import { View, TouchableOpacity, Text, PanResponder } from 'react-native';
-import Svg, { Circle, Text as SvgText } from 'react-native-svg';
-import { GestureHandlerRootView } from "react-native-gesture-handler";
+import React, {Component} from 'react';
+import {View, TouchableOpacity, Text, PanResponder} from 'react-native';
+import Svg, {Circle, Text as SvgText} from 'react-native-svg';
+import {GestureHandlerRootView} from "react-native-gesture-handler";
 import axios from "axios";
 import {CIRCLE_RADIUS, DIMENSIONS} from "./Constants";
-import { drawArrowsBetweenTwoPhases } from "./DrawArrows";
+import {drawArrowsBetweenTwoPhases} from "./DrawArrows";
 import GeneralStyle from "./GeneralStyle";
-import { freezeCircles, releaseCircles, releaseCirclesWithAction, deleteOtherBalls, prepareNewPhase } from './PhaseFunctions';
+import {
+    freezeCircles,
+    releaseCircles,
+    releaseCirclesWithAction,
+    deleteOtherBalls,
+    prepareNewPhase
+} from './PhaseFunctions';
+import generalStyle from "./GeneralStyle";
 
 class CreatePhase extends Component {
 
@@ -23,11 +29,11 @@ class CreatePhase extends Component {
         arrows: [],
         oldPhases: [],
         currentPhase: [
-            { x: 30, y: 200, cx: '', cy: '', action: 0, draggable: false, ball: false },
-            { x: 30, y: 260, cx: '', cy: '', action: 0, draggable: false, ball: false },
-            { x: 30, y: 320, cx: '', cy: '', action: 0, draggable: false, ball: false },
-            { x: 30, y: 380, cx: '', cy: '', action: 0, draggable: false, ball: false },
-            { x: 30, y: 440, cx: '', cy: '', action: 0, draggable: false, ball: false }
+            {x: 30, y: 200, cx: '', cy: '', action: 0, draggable: false, ball: false},
+            {x: 30, y: 260, cx: '', cy: '', action: 0, draggable: false, ball: false},
+            {x: 30, y: 320, cx: '', cy: '', action: 0, draggable: false, ball: false},
+            {x: 30, y: 380, cx: '', cy: '', action: 0, draggable: false, ball: false},
+            {x: 30, y: 440, cx: '', cy: '', action: 0, draggable: false, ball: false}
         ],
         selectedCircle: null,
         menuVisible: false,
@@ -36,7 +42,9 @@ class CreatePhase extends Component {
 
     componentDidMount() {
         console.log("Initial positions:", this.state.currentPhase);
-        {console.log(!this.state.setInitialPosition && !this.state.ballBeenSet)}
+        {
+            console.log(!this.state.setInitialPosition && !this.state.ballBeenSet)
+        }
     }
 
     createPanResponder = (index, isMainCircle) => {
@@ -70,7 +78,7 @@ class CreatePhase extends Component {
                             cy: gestureState.moveY,
                         };
                     }
-                    this.setState({ currentPhase: newPhase, });
+                    this.setState({currentPhase: newPhase,});
                     this.drawArrows();
 
                 }
@@ -99,9 +107,9 @@ class CreatePhase extends Component {
             action: phase.action
         }));
 
-        axios.post("http://10.0.0.8:8989" + '/add-phase', {
-            secret: "630d73f0-16b7-4ecf-b44f-4192dfb96d1e",
-            playName: "three",
+        axios.post(this.props.domain + '/add-phase', {
+            secret: this.props.userSecret,
+            playName: this.props.playName,
             orderNum: 1,
             playerPhases
         })
@@ -110,7 +118,7 @@ class CreatePhase extends Component {
                 if (response.data.success) {
                     console.log('OK');
                 }
-                this.setState({ errorCode: response.data.errorCode });
+                this.setState({errorCode: response.data.errorCode});
             })
             .catch(error => {
                 console.error('Error sending phase data:', error);
@@ -153,7 +161,7 @@ class CreatePhase extends Component {
                 ballBeenPassed: true
             });
             const releasedPhases = releaseCirclesWithAction(newPhases);
-            this.setState({ currentPhase: releasedPhases });
+            this.setState({currentPhase: releasedPhases});
 
             this.drawArrows()
         }
@@ -168,9 +176,8 @@ class CreatePhase extends Component {
                         prevState.currentPhase
                     )
                     : [];
-                return { arrows: newArrows };
+                return {arrows: newArrows};
             },
-
         );
     }
 
@@ -187,21 +194,21 @@ class CreatePhase extends Component {
                 const newPhase = [...prevState.currentPhase];
                 newPhase[prevState.selectedCircle].action = action;
                 newPhase[prevState.selectedCircle].draggable = true;
-                return { currentPhase: newPhase, menuVisible: false };
+                return {currentPhase: newPhase, menuVisible: false};
             });
         }
         if (action === 5) {
             this.setState(prevState => {
                 const newPhase = [...prevState.currentPhase];
                 newPhase[prevState.selectedCircle].draggable = false;
-                return { currentPhase: newPhase, done: true };
+                return {currentPhase: newPhase, done: true};
             });
         }
     };
 
     handlePass = () => {
         const frozenPhases = freezeCircles(this.state.currentPhase);
-        this.setState({ currentPhase: frozenPhases });
+        this.setState({currentPhase: frozenPhases});
         if (!this.state.ballBeenPassed) {
             this.setState({
                 waitingForPass: true,
@@ -212,11 +219,11 @@ class CreatePhase extends Component {
 
     handleBallMenuClick = () => {
         const releasedPhases = releaseCircles(this.state.currentPhase);
-        this.setState({ currentPhase: releasedPhases });
+        this.setState({currentPhase: releasedPhases});
         this.setState(prevState => {
             const newPhase = [...prevState.currentPhase];
             newPhase[prevState.selectedCircle].ball = true;
-            return { currentPhase: newPhase, setBallMenuVisible: false, ballBeenSet:true };
+            return {currentPhase: newPhase, setBallMenuVisible: false, ballBeenSet: true};
         });
     }
 
@@ -295,32 +302,29 @@ class CreatePhase extends Component {
 
                     {(!this.state.setInitialPosition && !this.state.done) &&
                         <TouchableOpacity
-                        style={GeneralStyle.sendPhaseButton}
-                        onPress={this.createPhase}
-                        disabled={this.state.setInitialPosition}
-                    >
-                        <Text style={{ color: 'white' }}>Send Phase</Text>
+                            style={GeneralStyle.sendPhaseButton}
+                            onPress={this.createPhase}
+                            disabled={this.state.setInitialPosition}
+                        >
+                            <Text style={{color: 'white'}}>Send Phase</Text>
                         </TouchableOpacity>
                     }
 
 
-
                     {this.state.setInitialPosition && (
                         <TouchableOpacity
-                        style={GeneralStyle.setInitialPositionButton}
-                        onPress={this.createPhase}
-                        disabled={(!this.state.setInitialPosition || !this.state.ballBeenSet)}
-                    >
-                        <Text style={{ color: 'white' }}>Set initial position</Text>
+                            style={GeneralStyle.setInitialPositionButton}
+                            onPress={this.createPhase}
+                            disabled={(!this.state.setInitialPosition || !this.state.ballBeenSet)}>
+                            <Text style={{color: 'white'}}>Set initial position</Text>
                         </TouchableOpacity>)
                     }
 
                     {!this.state.setInitialPosition &&
                         <TouchableOpacity
                             style={GeneralStyle.setInitialPositionButton}
-                            onPress={this.finishPlay}
-                        >
-                            <Text style={{ color: 'white' }}>Done</Text>
+                            onPress={this.finishPlay}>
+                            <Text style={{color: 'white'}}>Done</Text>
                         </TouchableOpacity>
                     }
 
@@ -361,7 +365,8 @@ class CreatePhase extends Component {
                     {this.state.setBallMenuVisible && (
                         <View style={GeneralStyle.menuContainer}>
                             <View style={GeneralStyle.menu}>
-                                <TouchableOpacity style={GeneralStyle.menuItem} onPress={() => this.handleBallMenuClick()}>
+                                <TouchableOpacity style={GeneralStyle.menuItem}
+                                                  onPress={() => this.handleBallMenuClick()}>
                                     <Text style={GeneralStyle.menuText}>Add Ball</Text>
                                 </TouchableOpacity>
                             </View>
@@ -369,7 +374,8 @@ class CreatePhase extends Component {
                     )}
                     {this.state.setInitialPosition && (
                         <View style={GeneralStyle.instructionContainer}>
-                            <Text style={GeneralStyle.instructionText}>Add Ball to one of your players and move them to their
+                            <Text style={GeneralStyle.instructionText}>Add Ball to one of your players and move them to
+                                their
                                 starting position.</Text>
                         </View>
                     )}
@@ -379,6 +385,18 @@ class CreatePhase extends Component {
                             <Text style={GeneralStyle.instructionText}>Click a player to pass.</Text>
                         </View>
                     )}
+                    <View style={generalStyle.container}>
+                        {this.state.done ?
+                            <View style={generalStyle.container}>
+                                <TouchableOpacity onPress={this.props.goBack} style={generalStyle.goBackButton}>
+                                    <Text style={[generalStyle.buttonText, {fontSize: 20}]}>{"<"}</Text>
+                                </TouchableOpacity>
+                            </View>
+                            :
+                            <View>
+                            </View>
+                        }
+                    </View>
                 </View>
             </View>
         );

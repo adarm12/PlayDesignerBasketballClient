@@ -57,7 +57,7 @@ class SearchUser extends React.Component {
                 {!this.state.chooseFriend ?
                     <View style={generalStyle.container}>
                         {!this.state.searchSuccess ?
-                            <View>
+                            <View style={generalStyle.container}>
                                 <TouchableOpacity onPress={this.props.goBack} style={generalStyle.goBackButton}>
                                     <Text style={[generalStyle.buttonText, {fontSize: 20}]}>{"<"}</Text>
                                 </TouchableOpacity>
@@ -78,7 +78,7 @@ class SearchUser extends React.Component {
                                 </View>
                             </View>
                             :
-                            <View>
+                            <View style={generalStyle.container}>
                                 <TouchableOpacity
                                     onPress={() => this.setState({searchSuccess: !this.state.searchSuccess})}
                                     style={generalStyle.goBackButton}>

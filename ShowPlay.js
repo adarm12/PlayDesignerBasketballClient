@@ -1,10 +1,10 @@
-import React, { Component } from 'react';
-import { Animated, Text, TouchableOpacity, View, StyleSheet } from 'react-native';
+import React, {Component} from 'react';
+import {Animated, Text, TouchableOpacity, View, StyleSheet} from 'react-native';
 import GeneralStyle from "./GeneralStyle";
-import Svg, { Circle, Text as SvgText } from 'react-native-svg';
+import Svg, {Circle, Text as SvgText} from 'react-native-svg';
 import {ACTIONS, CIRCLE_RADIUS, DIMENSIONS} from "./Constants";
-import { drawArrowsBetweenTwoPhases } from "./DrawArrows";
-
+import {drawArrowsBetweenTwoPhases} from "./DrawArrows";
+import generalStyle from "./GeneralStyle";
 
 
 class ShowPlay extends Component {
@@ -13,301 +13,17 @@ class ShowPlay extends Component {
         drawArrows: false,
         arrows: [],
         animatedPositions: [],
-        play:  {
-            "id": 1,
-            "name": "three",
-            "phases": [
-                {
-                    "id": 95,
-                    "orderNum": 1,
-                    "playerPhases": [
-                        {
-                            "id": 466,
-                            "playerNumber": 1,
-                            "hasBall": true,
-                            "x": 261,
-                            "y": 652,
-                            "cx": 0,
-                            "cy": 0,
-                            "action": 0
-                        },
-                        {
-                            "id": 467,
-                            "playerNumber": 2,
-                            "hasBall": false,
-                            "x": 392,
-                            "y": 558,
-                            "cx": 0,
-                            "cy": 0,
-                            "action": 0
-                        },
-                        {
-                            "id": 468,
-                            "playerNumber": 3,
-                            "hasBall": false,
-                            "x": 35,
-                            "y": 566,
-                            "cx": 0,
-                            "cy": 0,
-                            "action": 0
-                        },
-                        {
-                            "id": 469,
-                            "playerNumber": 4,
-                            "hasBall": false,
-                            "x": 302,
-                            "y": 271,
-                            "cx": 0,
-                            "cy": 0,
-                            "action": 0
-                        },
-                        {
-                            "id": 470,
-                            "playerNumber": 5,
-                            "hasBall": false,
-                            "x": 115,
-                            "y": 220,
-                            "cx": 0,
-                            "cy": 0,
-                            "action": 0
-                        }
-                    ]
-                },
-                {
-                    "id": 96,
-                    "orderNum": 1,
-                    "playerPhases": [
-                        {
-                            "id": 471,
-                            "playerNumber": 1,
-                            "hasBall": false,
-                            "x": 38,
-                            "y": 297,
-                            "cx": 55,
-                            "cy": 533,
-                            "action": 1
-                        },
-                        {
-                            "id": 472,
-                            "playerNumber": 2,
-                            "hasBall": false,
-                            "x": 392,
-                            "y": 558,
-                            "cx": -1,
-                            "cy": -1,
-                            "action": 0
-                        },
-                        {
-                            "id": 473,
-                            "playerNumber": 3,
-                            "hasBall": false,
-                            "x": 240,
-                            "y": 624,
-                            "cx": 166,
-                            "cy": 613,
-                            "action": 3
-                        },
-                        {
-                            "id": 474,
-                            "playerNumber": 4,
-                            "hasBall": true,
-                            "x": 302,
-                            "y": 271,
-                            "cx": -1,
-                            "cy": -1,
-                            "action": 0
-                        },
-                        {
-                            "id": 475,
-                            "playerNumber": 5,
-                            "hasBall": false,
-                            "x": 115,
-                            "y": 220,
-                            "cx": -1,
-                            "cy": -1,
-                            "action": 0
-                        }
-                    ]
-                },
-                {
-                    "id": 97,
-                    "orderNum": 1,
-                    "playerPhases": [
-                        {
-                            "id": 476,
-                            "playerNumber": 1,
-                            "hasBall": false,
-                            "x": 38,
-                            "y": 297,
-                            "cx": -1,
-                            "cy": -1,
-                            "action": 0
-                        },
-                        {
-                            "id": 477,
-                            "playerNumber": 2,
-                            "hasBall": false,
-                            "x": 392,
-                            "y": 558,
-                            "cx": -1,
-                            "cy": -1,
-                            "action": 0
-                        },
-                        {
-                            "id": 478,
-                            "playerNumber": 3,
-                            "hasBall": false,
-                            "x": 240,
-                            "y": 624,
-                            "cx": -1,
-                            "cy": -1,
-                            "action": 0
-                        },
-                        {
-                            "id": 479,
-                            "playerNumber": 4,
-                            "hasBall": true,
-                            "x": 359,
-                            "y": 548,
-                            "cx": 360,
-                            "cy": 434,
-                            "action": 2
-                        },
-                        {
-                            "id": 480,
-                            "playerNumber": 5,
-                            "hasBall": false,
-                            "x": 115,
-                            "y": 220,
-                            "cx": -1,
-                            "cy": -1,
-                            "action": 0
-                        }
-                    ]
-                },
-                {
-                    "id": 98,
-                    "orderNum": 1,
-                    "playerPhases": [
-                        {
-                            "id": 481,
-                            "playerNumber": 1,
-                            "hasBall": false,
-                            "x": 38,
-                            "y": 297,
-                            "cx": -1,
-                            "cy": -1,
-                            "action": 0
-                        },
-                        {
-                            "id": 482,
-                            "playerNumber": 2,
-                            "hasBall": true,
-                            "x": 252,
-                            "y": 257,
-                            "cx": 370,
-                            "cy": 384,
-                            "action": 2
-                        },
-                        {
-                            "id": 483,
-                            "playerNumber": 3,
-                            "hasBall": false,
-                            "x": 240,
-                            "y": 624,
-                            "cx": -1,
-                            "cy": -1,
-                            "action": 0
-                        },
-                        {
-                            "id": 484,
-                            "playerNumber": 4,
-                            "hasBall": false,
-                            "x": 359,
-                            "y": 548,
-                            "cx": -1,
-                            "cy": -1,
-                            "action": 0
-                        },
-                        {
-                            "id": 485,
-                            "playerNumber": 5,
-                            "hasBall": false,
-                            "x": 115,
-                            "y": 220,
-                            "cx": -1,
-                            "cy": -1,
-                            "action": 0
-                        }
-                    ]
-                },
-                {
-                    "id": 99,
-                    "orderNum": 1,
-                    "playerPhases": [
-                        {
-                            "id": 486,
-                            "playerNumber": 1,
-                            "hasBall": false,
-                            "x": 38,
-                            "y": 297,
-                            "cx": -1,
-                            "cy": -1,
-                            "action": 0
-                        },
-                        {
-                            "id": 487,
-                            "playerNumber": 2,
-                            "hasBall": false,
-                            "x": 252,
-                            "y": 257,
-                            "cx": -1,
-                            "cy": -1,
-                            "action": 0
-                        },
-                        {
-                            "id": 488,
-                            "playerNumber": 3,
-                            "hasBall": true,
-                            "x": 78,
-                            "y": 539,
-                            "cx": 159,
-                            "cy": 581,
-                            "action": 1
-                        },
-                        {
-                            "id": 489,
-                            "playerNumber": 4,
-                            "hasBall": false,
-                            "x": 359,
-                            "y": 548,
-                            "cx": -1,
-                            "cy": -1,
-                            "action": 0
-                        },
-                        {
-                            "id": 490,
-                            "playerNumber": 5,
-                            "hasBall": false,
-                            "x": 115,
-                            "y": 220,
-                            "cx": -1,
-                            "cy": -1,
-                            "action": 0
-                        }
-                    ]
-                }
-            ]
-        }
+        play: [],
     };
 
     componentDidMount() {
         this.sortPhases();
         this.initializeAnimatedPositions();
+        this.setState({play: this.props.playToShow})
     }
 
     sortPhases() {
-        const { play } = this.state;
+        const {play} = this.state;
 
         const sortedPhases = play.phases.map(phase => {
             return {
@@ -325,23 +41,23 @@ class ShowPlay extends Component {
     }
 
     initializeAnimatedPositions = (phaseIndex = 0) => {
-        const { play } = this.state;
+        const {play} = this.state;
         const currentPhase = play.phases[phaseIndex];
 
         const animatedPositions = currentPhase.playerPhases.map(playerPhase => ({
             id: playerPhase.id,
             playerNumber: playerPhase.playerNumber,
             hasBall: playerPhase.hasBall,
-            position: new Animated.ValueXY({ x: playerPhase.x, y: playerPhase.y }),
-            controlPosition: new Animated.ValueXY({ x: playerPhase.cx, y: playerPhase.cy })
+            position: new Animated.ValueXY({x: playerPhase.x, y: playerPhase.y}),
+            controlPosition: new Animated.ValueXY({x: playerPhase.cx, y: playerPhase.cy})
         }));
 
-        this.setState({ animatedPositions });
+        this.setState({animatedPositions});
     };
 
     moveCirclesToNextPhase = () => {
 
-        const { play, phaseNavigator, animatedPositions } = this.state;
+        const {play, phaseNavigator, animatedPositions} = this.state;
         const nextPhase = play.phases[phaseNavigator + 1];
 
         if (!nextPhase) return;
@@ -359,24 +75,24 @@ class ShowPlay extends Component {
 
                 // Ensure all coordinates are valid numbers
                 if (isNaN(startX) || isNaN(startY) || isNaN(endX) || isNaN(endY) || isNaN(controlX) || isNaN(controlY)) {
-                    console.error('Invalid coordinates:', { startX, startY, endX, endY, controlX, controlY });
+                    console.error('Invalid coordinates:', {startX, startY, endX, endY, controlX, controlY});
                     return;
                 }
 
-                if (controlX!==-1 && controlY!== -1) {
+                if (controlX !== -1 && controlY !== -1) {
                     // Define the duration of the animation
-                    const distance = Math.sqrt(Math.pow((startX-controlX),2)+Math.pow((startY-controlY),2)) + Math.sqrt(Math.pow((endX-controlX),2)+Math.pow((endY-controlY),2))
-                    const duration = 2*distance;
+                    const distance = Math.sqrt(Math.pow((startX - controlX), 2) + Math.pow((startY - controlY), 2)) + Math.sqrt(Math.pow((endX - controlX), 2) + Math.pow((endY - controlY), 2))
+                    const duration = 2 * distance;
 
-                    const midX = (startX+endX)/2;
-                    const midY = (startY+endY)/2;
+                    const midX = (startX + endX) / 2;
+                    const midY = (startY + endY) / 2;
 
-                    const doubleX = 2*controlX-midX;
-                    const doubleY = 2*controlY-midY;
+                    const doubleX = 2 * controlX - midX;
+                    const doubleY = 2 * controlY - midY;
 
                     // Create an array to store the animation values for the curve
                     const animationValues = [];
-                    const steps = distance/4; // Number of steps for the animation
+                    const steps = distance / 4; // Number of steps for the animation
                     for (let t = 0; t <= 1; t += 1 / steps) {
                         const x = Math.pow(1 - t, 2) * startX + 2 * (1 - t) * t * doubleX + Math.pow(t, 2) * endX;
                         const y = Math.pow(1 - t, 2) * startY + 2 * (1 - t) * t * doubleY + Math.pow(t, 2) * endY;
@@ -392,7 +108,7 @@ class ShowPlay extends Component {
                                 useNativeDriver: false
                             });
                         })
-                    ).start(() =>{
+                    ).start(() => {
                         this.updateBallState()
                     });
                 }
@@ -401,12 +117,11 @@ class ShowPlay extends Component {
     };
 
     updateBallState = (before) => {
-        const { play, phaseNavigator, animatedPositions } = this.state;
+        const {play, phaseNavigator, animatedPositions} = this.state;
         let currentPhase;
         if (before) {
-            currentPhase = play.phases[phaseNavigator+1];
-        }
-        else {
+            currentPhase = play.phases[phaseNavigator + 1];
+        } else {
             currentPhase = play.phases[phaseNavigator];
         }
         const updatedPositions = animatedPositions.map((animatedPosition) => {
@@ -424,13 +139,13 @@ class ShowPlay extends Component {
             return animatedPosition;
         });
 
-        this.setState({ animatedPositions: updatedPositions });
+        this.setState({animatedPositions: updatedPositions});
     };
 
     handleNextPress = () => {
-        const { play, phaseNavigator, animatedPositions } = this.state;
+        const {play, phaseNavigator, animatedPositions} = this.state;
 
-        if (phaseNavigator<play.phases.length-2) {
+        if (phaseNavigator < play.phases.length - 2) {
             const playerWithBall = play.phases[phaseNavigator].playerPhases.find(player => player.hasBall);
             const playerHadBall = play.phases[phaseNavigator + 1].playerPhases.find(player => player.playerNumber === playerWithBall.playerNumber);
 
@@ -488,8 +203,8 @@ class ShowPlay extends Component {
                     GeneralStyle.circle,
                     {
                         transform: [
-                            { translateX: Animated.add(animatedPosition.position.x, new Animated.Value(-CIRCLE_RADIUS)) },
-                            { translateY: Animated.add(animatedPosition.position.y, new Animated.Value(-CIRCLE_RADIUS)) }
+                            {translateX: Animated.add(animatedPosition.position.x, new Animated.Value(-CIRCLE_RADIUS))},
+                            {translateY: Animated.add(animatedPosition.position.y, new Animated.Value(-CIRCLE_RADIUS))}
                         ],
                     },
                 ]}
@@ -519,7 +234,7 @@ class ShowPlay extends Component {
     };
 
     drawArrows = () => {
-        const { play, phaseNavigator } = this.state;
+        const {play, phaseNavigator} = this.state;
         if (phaseNavigator >= play.phases.length - 1) return;
 
         const currentPhase = play.phases[phaseNavigator];
@@ -531,16 +246,18 @@ class ShowPlay extends Component {
         );
 
         console.log(newArrows);
-        this.setState({ arrows: newArrows });
+        this.setState({arrows: newArrows});
     };
 
     render() {
         return (
             <View style={[GeneralStyle.phaseContainer]}>
                 <View style={[GeneralStyle.phaseContainer, GeneralStyle.playArea]}>
+                    <TouchableOpacity onPress={this.props.goBack} style={GeneralStyle.goBackButton}>
+                        <Text style={[generalStyle.buttonText, {fontSize: 20}]}>{"<"}</Text>
+                    </TouchableOpacity>
                     {this.renderCircles()}
                     {this.state.arrows}
-
                     <TouchableOpacity style={GeneralStyle.nextButton} onPress={this.handleNextPress}>
                         <Text style={GeneralStyle.whiteButtonText}>Next</Text>
                     </TouchableOpacity>
@@ -552,7 +269,6 @@ class ShowPlay extends Component {
         );
     }
 }
-
 
 
 export default ShowPlay;

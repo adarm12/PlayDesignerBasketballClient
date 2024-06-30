@@ -81,38 +81,36 @@ class LoginPage extends React.Component {
 
     render() {
         return (
-            <View>
+            <View style={generalStyle.container}>
                 {!this.state.loginSuccess ?
-                    <View>
+                    <View style={generalStyle.container}>
                         <TouchableOpacity onPress={this.props.goBack} style={generalStyle.goBackButton}>
                             <Text style={[generalStyle.buttonText, {fontSize: 20}]}>{"<"}</Text>
                         </TouchableOpacity>
-                        <View style={generalStyle.container}>
-                            <Text style={generalStyle.heading}>Login</Text>
-                            <TextInput
-                                style={generalStyle.input}
-                                placeholder="username"
-                                secureTextEntry={true}
-                                value={this.state.username}
-                                onChangeText={(text) => this.onValueChange("username", text)}
-                            />
-                            <TextInput
-                                style={generalStyle.input}
-                                placeholder="Password"
-                                secureTextEntry={true}
-                                value={this.state.password}
-                                onChangeText={(text) => this.onValueChange("password", text)}
-                            />
-                            <TouchableOpacity onPress={this.login} style={generalStyle.button}>
-                                <Text style={generalStyle.buttonText}>Submit</Text>
-                            </TouchableOpacity>
-                            <Text>{this.errorCodeMessage()}</Text>
-                        </View>
+                        <Text style={generalStyle.heading}>Login</Text>
+                        <TextInput
+                            style={generalStyle.input}
+                            placeholder="username"
+                            secureTextEntry={true}
+                            value={this.state.username}
+                            onChangeText={(text) => this.onValueChange("username", text)}
+                        />
+                        <TextInput
+                            style={generalStyle.input}
+                            placeholder="Password"
+                            secureTextEntry={true}
+                            value={this.state.password}
+                            onChangeText={(text) => this.onValueChange("password", text)}
+                        />
+                        <TouchableOpacity onPress={this.login} style={generalStyle.button}>
+                            <Text style={generalStyle.buttonText}>Submit</Text>
+                        </TouchableOpacity>
+                        <Text>{this.errorCodeMessage()}</Text>
                     </View>
                     :
                     <View style={generalStyle.container}>
                         {!this.state.acceptRequest && !this.state.sendRequest && !this.state.createPlay && !this.state.showFriends ?
-                            <View>
+                            <View style={generalStyle.container}>
                                 <TouchableOpacity onPress={this.props.goBack} style={generalStyle.goBackButton}>
                                     <Text style={[generalStyle.buttonText, {fontSize: 20}]}>{"<"}</Text>
                                 </TouchableOpacity>
@@ -173,7 +171,6 @@ class LoginPage extends React.Component {
                         }
                     </View>
                 }
-
             </View>
         )
     }

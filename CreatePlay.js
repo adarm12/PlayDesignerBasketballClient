@@ -55,24 +55,22 @@ class CreatePlay extends React.Component {
         return (
             <View style={generalStyle.container}>
                 {!this.state.createPlaySuccess ?
-                    <View>
+                    <View style={generalStyle.container}>
                         <TouchableOpacity onPress={this.props.goBack} style={generalStyle.goBackButton}>
                             <Text style={[generalStyle.buttonText, {fontSize: 20}]}>{"<"}</Text>
                         </TouchableOpacity>
-                        <View style={generalStyle.container}>
-                            <Text style={generalStyle.heading}>Create New Play</Text>
-                            <TextInput
-                                style={generalStyle.input}
-                                placeholder="Play Name"
-                                secureTextEntry={true}
-                                value={this.state.username}
-                                onChangeText={(text) => this.onValueChange("playName", text)}
-                            />
-                            <TouchableOpacity onPress={this.createPlay} style={generalStyle.button}>
-                                <Text style={generalStyle.buttonText}>Submit</Text>
-                            </TouchableOpacity>
-                            <Text>{this.errorCodeMessage()}</Text>
-                        </View>
+                        <Text style={generalStyle.heading}>Create New Play</Text>
+                        <TextInput
+                            style={generalStyle.input}
+                            placeholder="Play Name"
+                            secureTextEntry={true}
+                            value={this.state.username}
+                            onChangeText={(text) => this.onValueChange("playName", text)}
+                        />
+                        <TouchableOpacity onPress={this.createPlay} style={generalStyle.button}>
+                            <Text style={generalStyle.buttonText}>Submit</Text>
+                        </TouchableOpacity>
+                        <Text>{this.errorCodeMessage()}</Text>
                     </View>
                     :
                     <View>

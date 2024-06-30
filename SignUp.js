@@ -77,7 +77,7 @@ class SignUp extends React.Component {
 
     render() {
         return (
-            <View>
+            <View style={[generalStyle.container]}>
                 <TouchableOpacity onPress={this.props.goBack} style={generalStyle.goBackButton}>
                     <Text style={[generalStyle.buttonText, {fontSize: 20}]}>{"<"}</Text>
                 </TouchableOpacity>

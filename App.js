@@ -2,15 +2,15 @@ import React from 'react';
 import {View, Text, TouchableOpacity} from 'react-native';
 import LoginPage from "./LoginPage";
 import SignUp from "./SignUp";
+import ShowPlay from "./ShowPlay";
 import generalStyle from "./GeneralStyle";
 import CreatePhase from "./CreatePhase";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
-import ShowPlay from "./ShowPlay";
 
 class App extends React.Component {
 
     state = {
-        apiDomain: "http://10.0.0.8:8989",
+        apiDomain: "",
         signUp: false,
         login: false,
         showButtons: false,
@@ -30,7 +30,6 @@ class App extends React.Component {
             <View style={generalStyle.container}>
                 {this.state.test ?
                     <View>
-
                         <ShowPlay/>
                     </View>
                     :
