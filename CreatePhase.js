@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {View, TouchableOpacity, Text, PanResponder} from 'react-native';
+import {View, TouchableOpacity, Text, PanResponder, ImageBackground} from 'react-native';
 import Svg, {Circle, Text as SvgText} from 'react-native-svg';
 import {GestureHandlerRootView} from "react-native-gesture-handler";
 import axios from "axios";
@@ -292,102 +292,109 @@ class CreatePhase extends Component {
 
     render() {
         return (
-            <View style={[GeneralStyle.phaseContainer]}>
-                <View style={GeneralStyle.phaseContainer} height={DIMENSIONS.HEIGHT} width={DIMENSIONS.WIDTH}>
 
-                    {this.renderCircles()}
+            <View style={GeneralStyle.phaseContainer} height={DIMENSIONS.HEIGHT} width={DIMENSIONS.WIDTH}>
 
-                    {this.state.arrows.map(arrow => arrow)}
+                <ImageBackground
+                    source={require('./assets/background.png')}
+                    style={{ width: DIMENSIONS.WIDTH, height: 4*DIMENSIONS.WIDTH/3, top: 112 }}
+                    resizeMode="cover" // Adjust the image to cover the area
+                >
+                </ImageBackground>
+                {this.renderCircles()}
 
-                    {(!this.state.setInitialPosition && !this.state.done) &&
-                        <TouchableOpacity
-                            style={GeneralStyle.sendPhaseButton}
-                            onPress={this.createPhase}
-                            disabled={this.state.setInitialPosition}
-                        >
-                            <Text style={{color: 'white'}}>Send Phase</Text>
-                        </TouchableOpacity>
-                    }
+                {this.state.arrows.map(arrow => arrow)}
 
-
-                    {this.state.setInitialPosition && (
-                        <TouchableOpacity
-                            style={GeneralStyle.setInitialPositionButton}
-                            onPress={this.createPhase}
-                            disabled={(!this.state.setInitialPosition || !this.state.ballBeenSet)}>
-                            <Text style={{color: 'white'}}>Set initial position</Text>
-                        </TouchableOpacity>)
-                    }
-
-                    {!this.state.setInitialPosition &&
-                        <TouchableOpacity
-                            style={GeneralStyle.setInitialPositionButton}
-                            onPress={this.finishPlay}>
-                            <Text style={{color: 'white'}}>Done</Text>
-                        </TouchableOpacity>
-                    }
+                {(!this.state.setInitialPosition && !this.state.done) &&
+                    <TouchableOpacity
+                        style={GeneralStyle.sendPhaseButton}
+                        onPress={this.createPhase}
+                        disabled={this.state.setInitialPosition}
+                    >
+                        <Text style={{color: 'white'}}>Send Phase</Text>
+                    </TouchableOpacity>
+                }
 
 
-                    {(this.state.menuVisible && !this.state.done) && (
-                        <View style={GeneralStyle.menuContainer}>
-                            {!this.state.currentPhase[this.state.selectedCircle].ball &&
-                                (<View style={GeneralStyle.menu}>
-                                        <TouchableOpacity style={GeneralStyle.menuItem}
-                                                          onPress={() => this.handleMenuClick(1)}>
-                                            <Text style={GeneralStyle.menuText}>Cut</Text>
-                                        </TouchableOpacity>
-                                        <TouchableOpacity style={GeneralStyle.menuItem}
-                                                          onPress={() => this.handleMenuClick(3)}>
-                                            <Text style={GeneralStyle.menuText}>Screen</Text>
-                                        </TouchableOpacity>
-                                    </View>
-                                )}
-                            {this.state.currentPhase[this.state.selectedCircle].ball &&
-                                (<View style={GeneralStyle.menu}>
-                                        {!this.state.ballBeenPassed &&
-                                            (<TouchableOpacity style={GeneralStyle.menuItem}
-                                                               onPress={() => this.handlePass()}>
-                                                <Text style={GeneralStyle.menuText}>Pass</Text>
-                                            </TouchableOpacity>)}
-                                        <TouchableOpacity style={GeneralStyle.menuItem}
-                                                          onPress={() => this.handleMenuClick(2)}>
-                                            <Text style={GeneralStyle.menuText}>Dribble</Text>
-                                        </TouchableOpacity>
-                                        <TouchableOpacity style={GeneralStyle.menuItem}
-                                                          onPress={() => this.handleMenuClick(5)}>
-                                            <Text style={GeneralStyle.menuText}>Shoot</Text>
-                                        </TouchableOpacity>
-                                    </View>
-                                )}
+                {this.state.setInitialPosition && (
+                    <TouchableOpacity
+                        style={GeneralStyle.setInitialPositionButton}
+                        onPress={this.createPhase}
+                        disabled={(!this.state.setInitialPosition || !this.state.ballBeenSet)}>
+                        <Text style={{color: 'white'}}>Set initial position</Text>
+                    </TouchableOpacity>)
+                }
+
+                {!this.state.setInitialPosition &&
+                    <TouchableOpacity
+                        style={GeneralStyle.setInitialPositionButton}
+                        onPress={this.finishPlay}>
+                        <Text style={{color: 'white'}}>Done</Text>
+                    </TouchableOpacity>
+                }
+
+
+                {(this.state.menuVisible && !this.state.done) && (
+                    <View style={GeneralStyle.menuContainer}>
+                        {!this.state.currentPhase[this.state.selectedCircle].ball &&
+                            (<View style={GeneralStyle.menu}>
+                                    <TouchableOpacity style={GeneralStyle.menuItem}
+                                                      onPress={() => this.handleMenuClick(1)}>
+                                        <Text style={GeneralStyle.menuText}>Cut</Text>
+                                    </TouchableOpacity>
+                                    <TouchableOpacity style={GeneralStyle.menuItem}
+                                                      onPress={() => this.handleMenuClick(3)}>
+                                        <Text style={GeneralStyle.menuText}>Screen</Text>
+                                    </TouchableOpacity>
+                                </View>
+                            )}
+                        {this.state.currentPhase[this.state.selectedCircle].ball &&
+                            (<View style={GeneralStyle.menu}>
+                                    {!this.state.ballBeenPassed &&
+                                        (<TouchableOpacity style={GeneralStyle.menuItem}
+                                                           onPress={() => this.handlePass()}>
+                                            <Text style={GeneralStyle.menuText}>Pass</Text>
+                                        </TouchableOpacity>)}
+                                    <TouchableOpacity style={GeneralStyle.menuItem}
+                                                      onPress={() => this.handleMenuClick(2)}>
+                                        <Text style={GeneralStyle.menuText}>Dribble</Text>
+                                    </TouchableOpacity>
+                                    <TouchableOpacity style={GeneralStyle.menuItem}
+                                                      onPress={() => this.handleMenuClick(5)}>
+                                        <Text style={GeneralStyle.menuText}>Shoot</Text>
+                                    </TouchableOpacity>
+                                </View>
+                            )}
+                    </View>
+                )}
+                {this.state.setBallMenuVisible && (
+                    <View style={GeneralStyle.menuContainer}>
+                        <View style={GeneralStyle.menu}>
+                            <TouchableOpacity style={GeneralStyle.menuItem}
+                                              onPress={() => this.handleBallMenuClick()}>
+                                <Text style={GeneralStyle.menuText}>Add Ball</Text>
+                            </TouchableOpacity>
                         </View>
-                    )}
-                    {this.state.setBallMenuVisible && (
-                        <View style={GeneralStyle.menuContainer}>
-                            <View style={GeneralStyle.menu}>
-                                <TouchableOpacity style={GeneralStyle.menuItem}
-                                                  onPress={() => this.handleBallMenuClick()}>
-                                    <Text style={GeneralStyle.menuText}>Add Ball</Text>
-                                </TouchableOpacity>
-                            </View>
-                        </View>
-                    )}
-                    {this.state.setInitialPosition && (
-                        <View style={GeneralStyle.instructionContainer}>
-                            <Text style={GeneralStyle.instructionText}>Add Ball to one of your players and move them to
-                                their
-                                starting position.</Text>
-                        </View>
-                    )}
+                    </View>
+                )}
+                {this.state.setInitialPosition && (
+                    <View style={GeneralStyle.instructionContainer}>
+                        <Text style={GeneralStyle.instructionText}>Add Ball to one of your players and move them to
+                            their
+                            starting position.</Text>
+                    </View>
+                )}
 
-                    {this.state.waitingForPass && (
-                        <View style={GeneralStyle.instructionContainer}>
-                            <Text style={GeneralStyle.instructionText}>Click a player to pass.</Text>
-                        </View>
-                    )}
-                </View>
+                {this.state.waitingForPass && (
+                    <View style={GeneralStyle.instructionContainer}>
+                        <Text style={GeneralStyle.instructionText}>Click a player to pass.</Text>
+                    </View>
+                )}
             </View>
+
         );
     }
+
 }
 
 export default CreatePhase;

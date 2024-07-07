@@ -10,11 +10,11 @@ import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 class App extends React.Component {
 
     state = {
-        apiDomain: "",
+        apiDomain: "http://10.0.0.3:8989",
         signUp: false,
         login: false,
         showButtons: false,
-        test: true,
+        test: false,
     }
 
     goBack = () => {

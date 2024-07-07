@@ -41,6 +41,7 @@ export const prepareNewPhase = (currentPhase) => {
         cx:-1,
         cy:-1
     }));
+    const phaseNumberNew = currentPhase.phaseNumber++;
     return {
         currentPhase: newPhases,
         setInitialPosition: false,
@@ -49,6 +50,7 @@ export const prepareNewPhase = (currentPhase) => {
         selectedCircle: null,
         menuVisible: false,
         setBallMenuVisible: false,
-        arrows: []
+        arrows: [],
+        phaseNumber: phaseNumberNew
     };
 };

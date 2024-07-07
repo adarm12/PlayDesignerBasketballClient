@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Animated, Text, TouchableOpacity, View, StyleSheet} from 'react-native';
+import {Animated, Text, TouchableOpacity, View, StyleSheet, ImageBackground} from 'react-native';
 import GeneralStyle from "./GeneralStyle";
 import Svg, {Circle, Text as SvgText} from 'react-native-svg';
 import {ACTIONS, CIRCLE_RADIUS, DIMENSIONS} from "./Constants";
@@ -17,13 +17,17 @@ class ShowPlay extends Component {
     };
 
     componentDidMount() {
-        this.sortPhases();
-        this.initializeAnimatedPositions();
-        this.setState({play: this.props.playToShow})
+        console.log(this.props.playToShow)
+        this.setState({play: this.props.playToShow}, () => {
+            this.sortPhases();
+            this.initializeAnimatedPositions();
+        });
     }
 
     sortPhases() {
         const {play} = this.state;
+
+        console.log(play)
 
         const sortedPhases = play.phases.map(phase => {
             return {
@@ -253,6 +257,13 @@ class ShowPlay extends Component {
         return (
             <View style={[GeneralStyle.phaseContainer]}>
                 <View style={[GeneralStyle.phaseContainer, GeneralStyle.playArea]}>
+                    <ImageBackground
+                        source={require('./assets/background.png')}
+                        style={{ width: DIMENSIONS.WIDTH, height: 4*DIMENSIONS.WIDTH/3, top: 112 }}
+                        resizeMode="cover" // Adjust the image to cover the area
+                    >
+                    </ImageBackground>
+
                     <TouchableOpacity onPress={this.props.goBack} style={GeneralStyle.goBackButton}>
                         <Text style={[generalStyle.buttonText, {fontSize: 20}]}>{"<"}</Text>
                     </TouchableOpacity>

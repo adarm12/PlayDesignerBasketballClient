@@ -70,7 +70,7 @@ const generalStyle = StyleSheet.create({
     //phase stuff
     phaseContainer: {
         flex: 1,
-        backgroundColor: '#4B9CD3', // Changed background color to make circles more visible
+        backgroundColor: '#e0c298'
     },
     gestureHandler: {
         position: 'absolute',
@@ -168,6 +168,8 @@ const generalStyle = StyleSheet.create({
         fontWeight: 'bold',
         textAlign: 'center',
     },
+
+
 });
 
 export default generalStyle;
