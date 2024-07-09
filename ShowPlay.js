@@ -258,7 +258,7 @@ class ShowPlay extends Component {
             <View style={[GeneralStyle.phaseContainer]}>
                 <View style={[GeneralStyle.phaseContainer, GeneralStyle.playArea]}>
                     <ImageBackground
-                        source={require('./assets/background.png')}
+                        source={require('./assets/background2.png')}
                         style={{ width: DIMENSIONS.WIDTH, height: 4*DIMENSIONS.WIDTH/3, top: 112 }}
                         resizeMode="cover" // Adjust the image to cover the area
                     >

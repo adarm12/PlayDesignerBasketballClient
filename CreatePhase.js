@@ -61,15 +61,13 @@ class CreatePhase extends Component {
                                 y: gestureState.moveY,
                             };
                         } else if (this.state.oldPhases.length > 0) {
-                            const lastPhase = this.state.oldPhases[this.state.oldPhases.length - 1][index];
                             newPhase[index] = {
                                 ...newPhase[index],
                                 x: gestureState.moveX,
                                 y: gestureState.moveY,
-                                cx: (gestureState.moveX + lastPhase.x) / 2,
-                                cy: (gestureState.moveY + lastPhase.y) / 2
+                                cx: (newPhase[index].cx === -1) ? null : gestureState.moveX,
+                                cy: (newPhase[index].cy === -1) ? null : gestureState.moveY,
                             };
-
                         }
                     } else {
                         newPhase[index] = {
@@ -78,15 +76,27 @@ class CreatePhase extends Component {
                             cy: gestureState.moveY,
                         };
                     }
-                    this.setState({currentPhase: newPhase,});
-                    this.drawArrows();
+                    this.setState({ currentPhase: newPhase });
 
+                    this.drawArrows();
                 }
             },
-            onPanResponderRelease: () => {
+            onPanResponderRelease: (event, gestureState) => {
+                const newPhase = [...this.state.currentPhase];
+                if (isMainCircle && !this.state.setInitialPosition && this.state.oldPhases.length > 0) {
+                    const lastPhase = this.state.oldPhases[this.state.oldPhases.length - 1][index];
+                    newPhase[index] = {
+                        ...newPhase[index],
+                        cx: (newPhase[index].cx === gestureState.moveX) ? (gestureState.moveX + lastPhase.x) / 2 : newPhase[index].cx,
+                        cy: (newPhase[index].cy === gestureState.moveY) ? (gestureState.moveY + lastPhase.y) / 2 : newPhase[index].cy,
+                    };
+                    this.setState({ currentPhase: newPhase });
+                    this.drawArrows();
+                }
             }
         });
     };
+
 
     panResponders = this.state.currentPhase.map((circle, index) =>
         this.createPanResponder(index, true)
@@ -275,12 +285,14 @@ class CreatePhase extends Component {
                             height: 20,
                         }}
                     >
-                        <Svg height={30} width={30}>
+                        <Svg height={28} width={28}>
                             <Circle
-                                cx="15"
-                                cy="15"
-                                r="15"
-                                fill="blue"
+                                cx="14"
+                                cy="14"
+                                r="13"
+                                fill="black"
+                                stroke="white"
+                                strokeWidth="2.5"
                             />
                         </Svg>
                     </View>
@@ -296,13 +308,13 @@ class CreatePhase extends Component {
             <View style={GeneralStyle.phaseContainer} height={DIMENSIONS.HEIGHT} width={DIMENSIONS.WIDTH}>
 
                 <ImageBackground
-                    source={require('./assets/background.png')}
+                    source={require('./assets/background2.png')}
                     style={{ width: DIMENSIONS.WIDTH, height: 4*DIMENSIONS.WIDTH/3, top: 112 }}
                     resizeMode="cover" // Adjust the image to cover the area
                 >
                 </ImageBackground>
-                {this.renderCircles()}
 
+                {this.renderCircles()}
                 {this.state.arrows.map(arrow => arrow)}
 
                 {(!this.state.setInitialPosition && !this.state.done) &&
@@ -311,7 +323,7 @@ class CreatePhase extends Component {
                         onPress={this.createPhase}
                         disabled={this.state.setInitialPosition}
                     >
-                        <Text style={{color: 'white'}}>Send Phase</Text>
+                        <Text style={{color: 'white'}}>Next Phase</Text>
                     </TouchableOpacity>
                 }
 
