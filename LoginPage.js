@@ -6,6 +6,7 @@ import ShowRequesters from "./ShowRequesters";
 import generalStyle from "./GeneralStyle";
 import CreatePlay from "./CreatePlay";
 import ShowFriends from "./ShowFriends";
+import ShowUserPlays from "./ShowUserPlays";
 
 class LoginPage extends React.Component {
     state = {
@@ -19,6 +20,8 @@ class LoginPage extends React.Component {
         acceptRequest: false,
         createPlay: false,
         showFriends: false,
+        showUserPlays: false,
+        userPlaysList: [],
     }
 
     componentDidMount() {
@@ -38,6 +41,7 @@ class LoginPage extends React.Component {
                 console.log(response.data.user.secret);
                 this.setState({loginSuccess: true});
                 this.setState({userSecret: response.data.user.secret});
+                this.setState({userPlaysList: response.data.user.plays});
             }
             this.setState({errorCode: response.data.errorCode})
         })
@@ -77,6 +81,8 @@ class LoginPage extends React.Component {
             this.setState({createPlay: !this.state.createPlay})
         else if (this.state.showFriends)
             this.setState({showFriends: !this.state.showFriends})
+        else if (this.state.showUserPlays)
+            this.setState({showUserPlays: !this.state.showUserPlays})
     }
 
     render() {
@@ -91,7 +97,6 @@ class LoginPage extends React.Component {
                         <TextInput
                             style={generalStyle.input}
                             placeholder="username"
-                            secureTextEntry={true}
                             value={this.state.username}
                             onChangeText={(text) => this.onValueChange("username", text)}
                         />
@@ -109,7 +114,8 @@ class LoginPage extends React.Component {
                     </View>
                     :
                     <View style={generalStyle.container}>
-                        {!this.state.acceptRequest && !this.state.sendRequest && !this.state.createPlay && !this.state.showFriends ?
+                        {!this.state.acceptRequest && !this.state.sendRequest &&
+                        !this.state.createPlay && !this.state.showFriends && !this.state.showUserPlays ?
                             <View style={generalStyle.container}>
                                 <TouchableOpacity onPress={this.props.goBack} style={generalStyle.goBackButton}>
                                     <Text style={[generalStyle.buttonText, {fontSize: 20}]}>{"<"}</Text>
@@ -130,6 +136,10 @@ class LoginPage extends React.Component {
                                     <TouchableOpacity onPress={() => this.setState({showFriends: true})}
                                                       style={[generalStyle.button, {width: 200}]}>
                                         <Text style={generalStyle.buttonText}>Show Friends</Text>
+                                    </TouchableOpacity>
+                                    <TouchableOpacity onPress={() => this.setState({showUserPlays: true})}
+                                                      style={[generalStyle.button, {width: 200}]}>
+                                        <Text style={generalStyle.buttonText}>My Plays</Text>
                                     </TouchableOpacity>
                                 </View>
                             </View>
@@ -164,6 +174,15 @@ class LoginPage extends React.Component {
                                                  domain={this.state.apiDomain}
                                                  goBack={this.goBack}>
                                     </ShowFriends>
+                                    :
+                                    <View></View>
+                                }
+                                {this.state.showUserPlays ?
+                                    <ShowUserPlays secretFromLogin={this.state.userSecret}
+                                                   domain={this.state.apiDomain}
+                                                   userPlaysList={this.state.userPlaysList}
+                                                   goBack={this.goBack}>
+                                    </ShowUserPlays>
                                     :
                                     <View></View>
                                 }
