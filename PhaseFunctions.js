@@ -39,7 +39,8 @@ export const prepareNewPhase = (currentPhase) => {
         draggable: false,
         action: 0,
         cx:-1,
-        cy:-1
+        cy:-1,
+        moved:false
     }));
     const phaseNumberNew = currentPhase.phaseNumber++;
     return {

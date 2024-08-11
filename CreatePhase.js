@@ -29,11 +29,11 @@ class CreatePhase extends Component {
         arrows: [],
         oldPhases: [],
         currentPhase: [
-            {x: 30, y: 200, cx: '', cy: '', action: 0, draggable: false, ball: false},
-            {x: 30, y: 260, cx: '', cy: '', action: 0, draggable: false, ball: false},
-            {x: 30, y: 320, cx: '', cy: '', action: 0, draggable: false, ball: false},
-            {x: 30, y: 380, cx: '', cy: '', action: 0, draggable: false, ball: false},
-            {x: 30, y: 440, cx: '', cy: '', action: 0, draggable: false, ball: false}
+            {x: 30, y: 200, cx: '', cy: '', action: 0, draggable: false, ball: false, moved: false},
+            {x: 30, y: 260, cx: '', cy: '', action: 0, draggable: false, ball: false, moved: false},
+            {x: 30, y: 320, cx: '', cy: '', action: 0, draggable: false, ball: false, moved: false},
+            {x: 30, y: 380, cx: '', cy: '', action: 0, draggable: false, ball: false, moved: false},
+            {x: 30, y: 440, cx: '', cy: '', action: 0, draggable: false, ball: false, moved: false}
         ],
         selectedCircle: null,
         menuVisible: false,
@@ -52,7 +52,10 @@ class CreatePhase extends Component {
             onStartShouldSetPanResponder: () => this.state.currentPhase[index].draggable,
             onPanResponderMove: (event, gestureState) => {
                 if (this.state.currentPhase[index].draggable) {
+                    const circle = this.state.currentPhase[index];
                     const newPhase = [...this.state.currentPhase];
+                    const lastPhase = this.state.oldPhases[this.state.oldPhases.length - 1];
+
                     if (isMainCircle) {
                         if (this.state.setInitialPosition) {
                             newPhase[index] = {
@@ -61,13 +64,22 @@ class CreatePhase extends Component {
                                 y: gestureState.moveY,
                             };
                         } else if (this.state.oldPhases.length > 0) {
-                            newPhase[index] = {
-                                ...newPhase[index],
-                                x: gestureState.moveX,
-                                y: gestureState.moveY,
-                                cx: (newPhase[index].cx === -1) ? null : gestureState.moveX,
-                                cy: (newPhase[index].cy === -1) ? null : gestureState.moveY,
-                            };
+                            if (!circle.moved) {
+                                newPhase[index] = {
+                                    ...newPhase[index],
+                                    x: gestureState.moveX,
+                                    y: gestureState.moveY,
+                                    cx: (gestureState.moveX + lastPhase[index].x) / 2,
+                                    cy: (gestureState.moveY + lastPhase[index].y) / 2,
+                                };
+                            }
+                            else {
+                                newPhase[index] = {
+                                    ...newPhase[index],
+                                    x: gestureState.moveX,
+                                    y: gestureState.moveY,
+                                };
+                            }
                         }
                     } else {
                         newPhase[index] = {
@@ -84,11 +96,9 @@ class CreatePhase extends Component {
             onPanResponderRelease: (event, gestureState) => {
                 const newPhase = [...this.state.currentPhase];
                 if (isMainCircle && !this.state.setInitialPosition && this.state.oldPhases.length > 0) {
-                    const lastPhase = this.state.oldPhases[this.state.oldPhases.length - 1][index];
                     newPhase[index] = {
                         ...newPhase[index],
-                        cx: (newPhase[index].cx === gestureState.moveX) ? (gestureState.moveX + lastPhase.x) / 2 : newPhase[index].cx,
-                        cy: (newPhase[index].cy === gestureState.moveY) ? (gestureState.moveY + lastPhase.y) / 2 : newPhase[index].cy,
+                        moved: true
                     };
                     this.setState({ currentPhase: newPhase });
                     this.drawArrows();
