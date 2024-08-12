@@ -2,7 +2,8 @@ import CutArrow from "./CutArrow";
 import DribbleArrow from "./DribbleArrow";
 import ScreenArrow from "./ScreenArrow";
 import PassArrow from "./PassArrow";
-import { ACTIONS } from "./Constants";
+import {ACTIONS, BASKET} from "./Constants";
+import Defender from "./Defender";
 
 const unit_per_cm = 10; // Define the conversion factor for your coordinate system
 
@@ -98,6 +99,34 @@ export const drawArrowsBetweenTwoPhases = (oldPhase, currentPhase) => {
     }).filter(arrow => arrow !== null);
 
     return arrows.concat(passArrows);
+};
+
+
+
+export const drawManToManDefenders = (currentPhase) => {
+
+    const unit_per_inch = 2.54 * unit_per_cm; // Conversion factor for inches
+    const inches_from_element = 2.2; // Distance from the element in inches
+
+    const defenders = currentPhase.map((element, index) => {
+        const basketX = BASKET.LEFT;
+        const basketY = BASKET.TOP;
+
+        const distanceToBasket = Math.sqrt(Math.pow(basketX - element.x, 2) + Math.pow(basketY - element.y, 2));
+        if (distanceToBasket === 0) return null; // Avoid division by zero
+
+        const defenderX = element.x + (inches_from_element * unit_per_inch * (basketX - element.x) / distanceToBasket);
+        const defenderY = element.y + (inches_from_element * unit_per_inch * (basketY - element.y) / distanceToBasket);
+
+        return <Defender key={`defender-${index}`} x={defenderX} y={defenderY}/>;
+    }).filter(defender => defender !== null);
+
+    return defenders;
+};
+
+export const drawZoneDefenders = (currentPhase) => {
+
+
 };
 
 

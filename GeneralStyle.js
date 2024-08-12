@@ -169,6 +169,13 @@ const generalStyle = StyleSheet.create({
         textAlign: 'center',
     },
 
+    backgroundImage: {
+        flex: 1,
+        width: DIMENSIONS.WIDTH,
+        height: DIMENSIONS.HEIGHT,
+        top: 0,
+        position:"absolute"
+    },
 
 });
 

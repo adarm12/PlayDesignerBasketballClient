@@ -15,13 +15,25 @@ export const DIMENSIONS = {
 
 };
 
-export const CIRCLE_RADIUS=25;
+export const CIRCLE_RADIUS=25/414*DIMENSIONS.WIDTH;
 
 export const ACTIONS = {
     CUT: 1,
     DRIBBLE: 2,
     SCREEN: 3,
     SHOOT:5
+
+};
+
+export const BASKET = {
+    LEFT: DIMENSIONS.WIDTH/2,
+    TOP: DIMENSIONS.HEIGHT/5
+
+};
+
+export const DEFENSE_TYPE = {
+    MAN_TO_MAN: 1,
+    ZONE: 2
 
 };
 

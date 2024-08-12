@@ -43,6 +43,7 @@ export const prepareNewPhase = (currentPhase) => {
         moved:false
     }));
     const phaseNumberNew = currentPhase.phaseNumber++;
+    console.log(phaseNumberNew)
     return {
         currentPhase: newPhases,
         setInitialPosition: false,

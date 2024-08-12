@@ -3,8 +3,8 @@ import {View, TouchableOpacity, Text, PanResponder, ImageBackground} from 'react
 import Svg, {Circle, Text as SvgText} from 'react-native-svg';
 import {GestureHandlerRootView} from "react-native-gesture-handler";
 import axios from "axios";
-import {CIRCLE_RADIUS, DIMENSIONS} from "./Constants";
-import {drawArrowsBetweenTwoPhases} from "./DrawArrows";
+import {CIRCLE_RADIUS, DEFENSE_TYPE, DIMENSIONS} from "./Constants";
+import {drawArrowsBetweenTwoPhases, drawManToManDefenders} from "./DrawFunctions";
 import GeneralStyle from "./GeneralStyle";
 import {
     freezeCircles,
@@ -20,20 +20,23 @@ class CreatePhase extends Component {
     state = {
         phaseNumber: 1,
         setInitialPosition: true,
+
         waitingForPass: false,
         ballBeenPassed: false,
         ballBeenSet: false,
         done: false,
+        defense: 1,
 
         errorCode: "",
         arrows: [],
+        defenders:[],
         oldPhases: [],
         currentPhase: [
-            {x: 30, y: 200, cx: '', cy: '', action: 0, draggable: false, ball: false, moved: false},
-            {x: 30, y: 260, cx: '', cy: '', action: 0, draggable: false, ball: false, moved: false},
-            {x: 30, y: 320, cx: '', cy: '', action: 0, draggable: false, ball: false, moved: false},
-            {x: 30, y: 380, cx: '', cy: '', action: 0, draggable: false, ball: false, moved: false},
-            {x: 30, y: 440, cx: '', cy: '', action: 0, draggable: false, ball: false, moved: false}
+            {x: DIMENSIONS.WIDTH/4, y: DIMENSIONS.HEIGHT-5*CIRCLE_RADIUS, cx: '', cy: '', action: 0, draggable: false, ball: false, moved: false},
+            {x: DIMENSIONS.WIDTH/4+2*CIRCLE_RADIUS, y: DIMENSIONS.HEIGHT-5*CIRCLE_RADIUS, cx: '', cy: '', action: 0, draggable: false, ball: false, moved: false},
+            {x: DIMENSIONS.WIDTH/4+4*CIRCLE_RADIUS, y: DIMENSIONS.HEIGHT-5*CIRCLE_RADIUS, cx: '', cy: '', action: 0, draggable: false, ball: false, moved: false},
+            {x: DIMENSIONS.WIDTH/4+6*CIRCLE_RADIUS, y: DIMENSIONS.HEIGHT-5*CIRCLE_RADIUS, cx: '', cy: '', action: 0, draggable: false, ball: false, moved: false},
+            {x: DIMENSIONS.WIDTH/4+8*CIRCLE_RADIUS, y: DIMENSIONS.HEIGHT-5*CIRCLE_RADIUS, cx: '', cy: '', action: 0, draggable: false, ball: false, moved: false}
         ],
         selectedCircle: null,
         menuVisible: false,
@@ -41,6 +44,9 @@ class CreatePhase extends Component {
     };
 
     componentDidMount() {
+        this.setState({
+            defense: this.props.defense
+        })
         console.log("Initial positions:", this.state.currentPhase);
         {
             console.log(!this.state.setInitialPosition && !this.state.ballBeenSet)
@@ -91,6 +97,8 @@ class CreatePhase extends Component {
                     this.setState({ currentPhase: newPhase });
 
                     this.drawArrows();
+                    this.drawDefenders();
+
                 }
             },
             onPanResponderRelease: (event, gestureState) => {
@@ -120,17 +128,20 @@ class CreatePhase extends Component {
         const playerPhases = this.state.currentPhase.map((phase, index) => ({
             playerNumber: index + 1,
             hasBall: phase.ball,
-            x: phase.x,
-            y: phase.y,
-            cx: phase.cx,
-            cy: phase.cy,
+            x: phase.x/DIMENSIONS.WIDTH,
+            y: phase.y/DIMENSIONS.HEIGHT,
+            cx: phase.cx/DIMENSIONS.WIDTH,
+            cy: phase.cy/DIMENSIONS.HEIGHT,
             action: phase.action
+
         }));
+
+
 
         axios.post(this.props.domain + '/add-phase', {
             secret: this.props.userSecret,
             playName: this.props.playName,
-            orderNum: 1,
+            orderNum: this.state.phaseNumber,
             playerPhases
         })
             .then(response => {
@@ -200,6 +211,18 @@ class CreatePhase extends Component {
         );
     }
 
+    drawDefenders = () => {
+        this.setState(
+            prevState => {
+                const newDefenders = drawManToManDefenders(
+                        prevState.currentPhase
+                    )
+                ;
+                return {defenders: newDefenders};
+            },
+        );
+    }
+
     initialPositionCircleClick = (index) => {
         this.setState({
             setBallMenuVisible: !this.state.setBallMenuVisible,
@@ -261,19 +284,19 @@ class CreatePhase extends Component {
                             },
                         ]}
                     >
-                        <Svg height={60} width={60}>
+                        <Svg height={CIRCLE_RADIUS*2+5} width={CIRCLE_RADIUS*2+5}>
                             <Circle
-                                cx="30"
-                                cy="30"
+                                cx={CIRCLE_RADIUS+1.5}
+                                cy={CIRCLE_RADIUS+1.5}
                                 r={CIRCLE_RADIUS}
                                 stroke="black"
                                 strokeWidth="2.5"
                                 fill={circles[index].ball ? "rgba(255, 165, 0, 0.5)" : "rgba(0, 0, 0, 0.05)"}
                             />
                             <SvgText
-                                x="30"
-                                y="35"
-                                fontSize="25"
+                                x={CIRCLE_RADIUS+2}
+                                y={CIRCLE_RADIUS+5}
+                                fontSize={CIRCLE_RADIUS*3/4}
                                 fill="black"
                                 textAnchor="middle"
                                 fontWeight="bold"
@@ -319,13 +342,15 @@ class CreatePhase extends Component {
 
                 <ImageBackground
                     source={require('./assets/background2.png')}
-                    style={{ width: DIMENSIONS.WIDTH, height: 4*DIMENSIONS.WIDTH/3, top: 112 }}
-                    resizeMode="cover" // Adjust the image to cover the area
+                    style={GeneralStyle.backgroundImage}
+                    resizeMode="contain"
                 >
                 </ImageBackground>
 
+
                 {this.renderCircles()}
                 {this.state.arrows.map(arrow => arrow)}
+                {this.state.defenders.map(defender => defender)}
 
                 {(!this.state.setInitialPosition && !this.state.done) &&
                     <TouchableOpacity

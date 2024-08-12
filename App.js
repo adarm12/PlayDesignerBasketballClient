@@ -6,6 +6,8 @@ import ShowPlay from "./ShowPlay";
 import generalStyle from "./GeneralStyle";
 import CreatePhase from "./CreatePhase";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
+import CreatePlay from "./CreatePlay";
+import {DIMENSIONS} from "./Constants";
 
 class App extends React.Component {
 
@@ -30,6 +32,7 @@ class App extends React.Component {
             <View style={generalStyle.container}>
                 {this.state.test ?
                     <View>
+                        {/*<Text> {DIMENSIONS.HEIGHT}, {DIMENSIONS.WIDTH}</Text>*/}
                         <CreatePhase/>
                     </View>
                     :

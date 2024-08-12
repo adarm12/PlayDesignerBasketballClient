@@ -2,8 +2,8 @@ import React, {Component} from 'react';
 import {Animated, Text, TouchableOpacity, View, StyleSheet, ImageBackground} from 'react-native';
 import GeneralStyle from "./GeneralStyle";
 import Svg, {Circle, Text as SvgText} from 'react-native-svg';
-import {ACTIONS, CIRCLE_RADIUS, DIMENSIONS} from "./Constants";
-import {drawArrowsBetweenTwoPhases} from "./DrawArrows";
+import {ACTIONS, CIRCLE_RADIUS, DEFENSE_TYPE, DIMENSIONS} from "./Constants";
+import {drawArrowsBetweenTwoPhases, drawManToManDefenders} from "./DrawFunctions";
 import generalStyle from "./GeneralStyle";
 
 
@@ -12,36 +12,43 @@ class ShowPlay extends Component {
         phaseNavigator: 0,
         drawArrows: false,
         arrows: [],
+        defenders:[],
         animatedPositions: [],
         play: [],
     };
 
     componentDidMount() {
-        console.log(this.props.playToShow)
         this.setState({play: this.props.playToShow}, () => {
             this.sortPhases();
-            this.initializeAnimatedPositions();
         });
     }
 
     sortPhases() {
-        const {play} = this.state;
+        const { play } = this.state;
 
-        console.log(play)
 
         const sortedPhases = play.phases.map(phase => {
             return {
                 ...phase,
-                playerPhases: phase.playerPhases.sort((a, b) => a.playerNumber - b.playerNumber)
+                playerPhases: phase.playerPhases.map(playerPhase => {
+                    return {
+                        ...playerPhase,
+                        x: playerPhase.x * DIMENSIONS.WIDTH,
+                        y: playerPhase.y * DIMENSIONS.HEIGHT,
+                        cx: playerPhase.cx * DIMENSIONS.WIDTH,
+                        cy: playerPhase.cy * DIMENSIONS.HEIGHT
+                    };
+                }).sort((a, b) => a.playerNumber - b.playerNumber)
             };
         });
 
+        // Update the state and call initializeAnimatedPositions as a callback
         this.setState({
             play: {
                 ...play,
                 phases: sortedPhases
             }
-        });
+        }, this.initializeAnimatedPositions);
     }
 
     initializeAnimatedPositions = (phaseIndex = 0) => {
@@ -60,11 +67,12 @@ class ShowPlay extends Component {
     };
 
     moveCirclesToNextPhase = () => {
-
         const {play, phaseNavigator, animatedPositions} = this.state;
         const nextPhase = play.phases[phaseNavigator + 1];
 
         if (!nextPhase) return;
+
+        let animationPromises = [];
 
         nextPhase.playerPhases.forEach((playerPhase, index) => {
             const animatedPosition = animatedPositions.find(pos => pos.playerNumber === playerPhase.playerNumber);
@@ -83,9 +91,9 @@ class ShowPlay extends Component {
                     return;
                 }
 
-                if (controlX !== -1 && controlY !== -1) {
+                if (controlX > 3 && controlY > 3) {
                     // Define the duration of the animation
-                    const distance = Math.sqrt(Math.pow((startX - controlX), 2) + Math.pow((startY - controlY), 2)) + Math.sqrt(Math.pow((endX - controlX), 2) + Math.pow((endY - controlY), 2))
+                    const distance = Math.sqrt(Math.pow((startX - controlX), 2) + Math.pow((startY - controlY), 2)) + Math.sqrt(Math.pow((endX - controlX), 2) + Math.pow((endY - controlY), 2));
                     const duration = 2 * distance;
 
                     const midX = (startX + endX) / 2;
@@ -104,19 +112,28 @@ class ShowPlay extends Component {
                     }
 
                     // Create an Animated sequence for the curve animation
-                    Animated.sequence(
+                    const animation = Animated.sequence(
                         animationValues.map((value, index) => {
                             return Animated.timing(animatedPosition.position, {
                                 toValue: value,
-                                duration: duration / steps,
+                                duration: 10,
                                 useNativeDriver: false
                             });
                         })
-                    ).start(() => {
-                        this.updateBallState()
-                    });
+                    );
+
+                    // Add the animation to the promises array
+                    animationPromises.push(new Promise(resolve => {
+                        animation.start(resolve);
+                    }));
                 }
             }
+        });
+
+        // Execute all animations and update ball state once they are finished
+        Promise.all(animationPromises).then(() => {
+            this.updateBallState(false);
+            this.drawDefenders();
         });
     };
 
@@ -149,13 +166,15 @@ class ShowPlay extends Component {
     handleNextPress = () => {
         const {play, phaseNavigator, animatedPositions} = this.state;
 
-        if (phaseNavigator < play.phases.length - 2) {
+
+        if (phaseNavigator < play.phases.length - 1) {
             const playerWithBall = play.phases[phaseNavigator].playerPhases.find(player => player.hasBall);
             const playerHadBall = play.phases[phaseNavigator + 1].playerPhases.find(player => player.playerNumber === playerWithBall.playerNumber);
 
+
+
             const playerWillHaveBall = play.phases[phaseNavigator + 1].playerPhases.find(player => player.hasBall);
             if (playerHadBall.action === ACTIONS.CUT || playerWillHaveBall.action === ACTIONS.DRIBBLE) {
-                console.log("here")
                 this.updateBallState(true)
             }
         }
@@ -165,7 +184,7 @@ class ShowPlay extends Component {
             prevState => {
                 if (prevState.drawArrows) {
                     const nextPhaseNavigator = Math.min(prevState.phaseNavigator + 1, prevState.play.phases.length - 1);
-                    this.moveCirclesToNextPhase(prevState.play.phases[prevState.phaseNavigator], prevState.play.phases[nextPhaseNavigator]);
+                    this.moveCirclesToNextPhase();
 
                     return {
                         phaseNavigator: nextPhaseNavigator,
@@ -184,6 +203,7 @@ class ShowPlay extends Component {
                 }
             }
         );
+        this.drawDefenders();
     };
 
     handleBackPress = () => {
@@ -213,19 +233,19 @@ class ShowPlay extends Component {
                     },
                 ]}
             >
-                <Svg height={60} width={60}>
+                <Svg height={CIRCLE_RADIUS*2+5} width={CIRCLE_RADIUS*2+5}>
                     <Circle
-                        cx="30"
-                        cy="30"
+                        cx={CIRCLE_RADIUS+1.5}
+                        cy={CIRCLE_RADIUS+1.5}
                         r={CIRCLE_RADIUS}
                         stroke="black"
                         strokeWidth="2.5"
                         fill={animatedPosition.hasBall ? "rgba(255, 165, 0, 0.5)" : "rgba(0, 0, 0, 0.05)"}
                     />
                     <SvgText
-                        x="30"
-                        y="35"
-                        fontSize="25"
+                        x={CIRCLE_RADIUS+2}
+                        y={CIRCLE_RADIUS+5}
+                        fontSize={CIRCLE_RADIUS*3/4}
                         fill="black"
                         textAnchor="middle"
                         fontWeight="bold"
@@ -236,6 +256,8 @@ class ShowPlay extends Component {
             </Animated.View>
         ));
     };
+
+
 
     drawArrows = () => {
         const {play, phaseNavigator} = this.state;
@@ -249,8 +271,21 @@ class ShowPlay extends Component {
             nextPhase.playerPhases
         );
 
-        console.log(newArrows);
         this.setState({arrows: newArrows});
+    };
+
+    drawDefenders = () => {
+        const {play, phaseNavigator} = this.state;
+
+        if (play.defense===DEFENSE_TYPE.MAN_TO_MAN) {
+            const currentPhase = play.phases[phaseNavigator];
+
+            const newDefenders = drawManToManDefenders(
+                currentPhase.playerPhases,
+            );
+
+            this.setState({defenders: newDefenders});
+        }
     };
 
     render() {
@@ -259,19 +294,26 @@ class ShowPlay extends Component {
                 <View style={[GeneralStyle.phaseContainer, GeneralStyle.playArea]}>
                     <ImageBackground
                         source={require('./assets/background2.png')}
-                        style={{ width: DIMENSIONS.WIDTH, height: 4*DIMENSIONS.WIDTH/3, top: 112 }}
-                        resizeMode="cover" // Adjust the image to cover the area
+                        style={GeneralStyle.backgroundImage}
+                        resizeMode="contain"
                     >
                     </ImageBackground>
+
+
+
 
                     <TouchableOpacity onPress={this.props.goBack} style={GeneralStyle.goBackButton}>
                         <Text style={[generalStyle.buttonText, {fontSize: 20}]}>{"<"}</Text>
                     </TouchableOpacity>
+
                     {this.renderCircles()}
                     {this.state.arrows}
+                    {this.state.defenders}
+
                     <TouchableOpacity style={GeneralStyle.nextButton} onPress={this.handleNextPress}>
                         <Text style={GeneralStyle.whiteButtonText}>Next</Text>
                     </TouchableOpacity>
+
                     <TouchableOpacity style={GeneralStyle.backButton} onPress={this.handleBackPress}>
                         <Text style={GeneralStyle.whiteButtonText}>Back</Text>
                     </TouchableOpacity>
