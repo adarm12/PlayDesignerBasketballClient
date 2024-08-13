@@ -78,7 +78,6 @@ class CreatePlay extends React.Component {
                         <TextInput
                             style={generalStyle.input}
                             placeholder="Play Name"
-                            secureTextEntry={true}
                             value={this.state.username}
                             onChangeText={(text) => this.onValueChange("playName", text)}
                         />

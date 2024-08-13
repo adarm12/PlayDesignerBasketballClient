@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Animated } from 'react-native';
 import Svg, { Line } from 'react-native-svg';
+import {DEFENDER_SIZE} from "./Constants";
 
 class Defender extends Component {
     constructor(props) {
@@ -34,7 +35,7 @@ class Defender extends Component {
     };
 
     render() {
-        const { size = 20, color = 'black' } = this.props;
+        const { size = DEFENDER_SIZE, color = 'black' } = this.props;
         const { animatedX, animatedY } = this.state;
 
         return (

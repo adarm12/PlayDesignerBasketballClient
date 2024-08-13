@@ -2,7 +2,7 @@ import CutArrow from "./CutArrow";
 import DribbleArrow from "./DribbleArrow";
 import ScreenArrow from "./ScreenArrow";
 import PassArrow from "./PassArrow";
-import {ACTIONS, BASKET} from "./Constants";
+import {ACTIONS, BASKET, DEFENDER_SIZE, DIMENSIONS, ZONE_DEFENDERS} from "./Constants";
 import Defender from "./Defender";
 
 const unit_per_cm = 10; // Define the conversion factor for your coordinate system
@@ -125,8 +125,55 @@ export const drawManToManDefenders = (currentPhase) => {
 };
 
 export const drawZoneDefenders = (currentPhase) => {
+    const ball = currentPhase.find(player => player.ball || player.hasBall);
 
+    const MOVE_DISTANCE = 45/414*DIMENSIONS.WIDTH;
 
+    // Helper function to calculate new position 2 cm towards the ball
+    const moveTowardsBall = (defenderX, defenderY, ballX, ballY) => {
+        const deltaX = ballX - defenderX;
+        const deltaY = ballY - defenderY;
+        const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+
+        if (distance < MOVE_DISTANCE) {
+            return { x: ballX, y: ballY };
+        }
+
+        const moveX = (deltaX / distance) * MOVE_DISTANCE;
+        const moveY = (deltaY / distance) * MOVE_DISTANCE;
+
+        return {
+            x: defenderX + moveX,
+            y: defenderY + moveY
+        };
+    };
+
+    const defenders = [
+        { position: ZONE_DEFENDERS.DOWN_LEFT, key: 1 },
+        { position: ZONE_DEFENDERS.DOWN_RIGHT, key: 2 },
+        { position: ZONE_DEFENDERS.MIDDLE, key: 3 },
+        { position: ZONE_DEFENDERS.TOP_LEFT, key: 4 },
+        { position: ZONE_DEFENDERS.TOP_RIGHT, key: 5 }
+    ];
+
+    return defenders.map((defender) => {
+        const newPosition = moveTowardsBall(
+            defender.position.X - DEFENDER_SIZE / 2,
+            defender.position.Y,
+            ball.x,
+            ball.y
+        );
+
+        return (
+            <Defender
+                key={`defender-${defender.key}`}
+                x={newPosition.x}
+                y={newPosition.y}
+            />
+        );
+    });
 };
+
+
 
 

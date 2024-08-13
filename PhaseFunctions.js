@@ -33,8 +33,8 @@ export const deleteOtherBalls = (currentPhase) => {
     }));
 };
 
-export const prepareNewPhase = (currentPhase) => {
-    const newPhases = currentPhase.map(phase => ({
+export const prepareNewPhase = (state) => {
+    const newPhases = state.currentPhase.map(phase => ({
         ...phase,
         draggable: false,
         action: 0,
@@ -42,8 +42,9 @@ export const prepareNewPhase = (currentPhase) => {
         cy:-1,
         moved:false
     }));
-    const phaseNumberNew = currentPhase.phaseNumber++;
-    console.log(phaseNumberNew)
+
+    const phaseNumberNew = state.phaseNumber+1;
+
     return {
         currentPhase: newPhases,
         setInitialPosition: false,

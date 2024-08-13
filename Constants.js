@@ -16,6 +16,7 @@ export const DIMENSIONS = {
 };
 
 export const CIRCLE_RADIUS=25/414*DIMENSIONS.WIDTH;
+export const DEFENDER_SIZE=20/414*DIMENSIONS.WIDTH;
 
 export const ACTIONS = {
     CUT: 1,
@@ -28,6 +29,30 @@ export const ACTIONS = {
 export const BASKET = {
     LEFT: DIMENSIONS.WIDTH/2,
     TOP: DIMENSIONS.HEIGHT/5
+
+};
+
+export const ZONE_DEFENDERS = {
+    DOWN_LEFT: {
+        X: DIMENSIONS.WIDTH/5,
+        Y:DIMENSIONS.HEIGHT/3.5
+    },
+    DOWN_RIGHT: {
+        X: 4*DIMENSIONS.WIDTH/5,
+        Y:DIMENSIONS.HEIGHT/3.5
+    },
+    MIDDLE: {
+        X: DIMENSIONS.WIDTH/2,
+        Y:DIMENSIONS.HEIGHT/2.6
+    },
+    TOP_LEFT: {
+        X: DIMENSIONS.WIDTH/4,
+        Y:DIMENSIONS.HEIGHT/2
+    },
+    TOP_RIGHT: {
+        X: 3*DIMENSIONS.WIDTH/4,
+        Y:DIMENSIONS.HEIGHT/2
+    },
 
 };
 

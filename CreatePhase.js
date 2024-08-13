@@ -4,7 +4,7 @@ import Svg, {Circle, Text as SvgText} from 'react-native-svg';
 import {GestureHandlerRootView} from "react-native-gesture-handler";
 import axios from "axios";
 import {CIRCLE_RADIUS, DEFENSE_TYPE, DIMENSIONS} from "./Constants";
-import {drawArrowsBetweenTwoPhases, drawManToManDefenders} from "./DrawFunctions";
+import {drawArrowsBetweenTwoPhases, drawManToManDefenders, drawZoneDefenders} from "./DrawFunctions";
 import GeneralStyle from "./GeneralStyle";
 import {
     freezeCircles,
@@ -25,7 +25,7 @@ class CreatePhase extends Component {
         ballBeenPassed: false,
         ballBeenSet: false,
         done: false,
-        defense: 1,
+        defense: 0,
 
         errorCode: "",
         arrows: [],
@@ -137,7 +137,6 @@ class CreatePhase extends Component {
         }));
 
 
-
         axios.post(this.props.domain + '/add-phase', {
             secret: this.props.userSecret,
             playName: this.props.playName,
@@ -160,7 +159,7 @@ class CreatePhase extends Component {
         }));
 
         if (!this.state.done) {
-            const newPhaseData = prepareNewPhase(this.state.currentPhase);
+            const newPhaseData = prepareNewPhase(this.state);
             this.setState(newPhaseData);
         } else {
             // GoBack
@@ -193,7 +192,8 @@ class CreatePhase extends Component {
             const releasedPhases = releaseCirclesWithAction(newPhases);
             this.setState({currentPhase: releasedPhases});
 
-            this.drawArrows()
+            this.drawArrows();
+            this.drawDefenders();
         }
     };
 
@@ -212,15 +212,28 @@ class CreatePhase extends Component {
     }
 
     drawDefenders = () => {
-        this.setState(
-            prevState => {
-                const newDefenders = drawManToManDefenders(
-                        prevState.currentPhase
-                    )
-                ;
-                return {defenders: newDefenders};
-            },
-        );
+        if (this.state.defense===DEFENSE_TYPE.MAN_TO_MAN) {   //man to man defenders
+            this.setState(
+                prevState => {
+                    const newDefenders = drawManToManDefenders(
+                            prevState.currentPhase
+                        )
+                    ;
+                    return {defenders: newDefenders};
+                },
+            );
+        }
+        else if (this.state.defense===DEFENSE_TYPE.ZONE) {   //zone defense
+            this.setState(
+                prevState => {
+                    const newDefenders = drawZoneDefenders(
+                            prevState.currentPhase
+                        )
+                    ;
+                    return {defenders: newDefenders};
+                },
+            );
+        }
     }
 
     initialPositionCircleClick = (index) => {

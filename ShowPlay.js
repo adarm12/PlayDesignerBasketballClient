@@ -3,7 +3,7 @@ import {Animated, Text, TouchableOpacity, View, StyleSheet, ImageBackground} fro
 import GeneralStyle from "./GeneralStyle";
 import Svg, {Circle, Text as SvgText} from 'react-native-svg';
 import {ACTIONS, CIRCLE_RADIUS, DEFENSE_TYPE, DIMENSIONS} from "./Constants";
-import {drawArrowsBetweenTwoPhases, drawManToManDefenders} from "./DrawFunctions";
+import {drawArrowsBetweenTwoPhases, drawManToManDefenders, drawZoneDefenders} from "./DrawFunctions";
 import generalStyle from "./GeneralStyle";
 
 
@@ -26,23 +26,25 @@ class ShowPlay extends Component {
     sortPhases() {
         const { play } = this.state;
 
+        const sortedPhases = play.phases
+            .sort((a, b) => a.phaseNumber - b.phaseNumber) // Sort the phases
+            .map(phase => {
+                return {
+                    ...phase,
+                    playerPhases: phase.playerPhases
+                        .map(playerPhase => {
+                            return {
+                                ...playerPhase,
+                                x: playerPhase.x * DIMENSIONS.WIDTH,
+                                y: playerPhase.y * DIMENSIONS.HEIGHT,
+                                cx: playerPhase.cx * DIMENSIONS.WIDTH,
+                                cy: playerPhase.cy * DIMENSIONS.HEIGHT
+                            };
+                        })
+                        .sort((a, b) => a.playerNumber - b.playerNumber) // Sort the playerPhases within each phase
+                };
+            });
 
-        const sortedPhases = play.phases.map(phase => {
-            return {
-                ...phase,
-                playerPhases: phase.playerPhases.map(playerPhase => {
-                    return {
-                        ...playerPhase,
-                        x: playerPhase.x * DIMENSIONS.WIDTH,
-                        y: playerPhase.y * DIMENSIONS.HEIGHT,
-                        cx: playerPhase.cx * DIMENSIONS.WIDTH,
-                        cy: playerPhase.cy * DIMENSIONS.HEIGHT
-                    };
-                }).sort((a, b) => a.playerNumber - b.playerNumber)
-            };
-        });
-
-        // Update the state and call initializeAnimatedPositions as a callback
         this.setState({
             play: {
                 ...play,
@@ -50,6 +52,7 @@ class ShowPlay extends Component {
             }
         }, this.initializeAnimatedPositions);
     }
+
 
     initializeAnimatedPositions = (phaseIndex = 0) => {
         const {play} = this.state;
@@ -277,15 +280,22 @@ class ShowPlay extends Component {
     drawDefenders = () => {
         const {play, phaseNavigator} = this.state;
 
-        if (play.defense===DEFENSE_TYPE.MAN_TO_MAN) {
-            const currentPhase = play.phases[phaseNavigator];
+        let newDefenders;
+        const currentPhase = play.phases[phaseNavigator];
 
-            const newDefenders = drawManToManDefenders(
+        if (play.defense===DEFENSE_TYPE.MAN_TO_MAN) {
+
+            newDefenders = drawManToManDefenders(
                 currentPhase.playerPhases,
             );
-
-            this.setState({defenders: newDefenders});
         }
+        else if (play.defense===DEFENSE_TYPE.ZONE) {
+            newDefenders = drawZoneDefenders(
+                currentPhase.playerPhases,
+            );
+        }
+        this.setState({defenders: newDefenders});
+
     };
 
     render() {
